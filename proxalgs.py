@@ -8,7 +8,9 @@ A proximal consensus optimization algorithm
 # imports
 import time
 import numpy as np
-import scipy.optimize as opt
+
+# exports
+__all__ = ['minimize']
 
 def minimize(objectives, theta_init, num_iter=20, rho_init=10, tau_inc=2, tau_dec=2, callback=None):
     """

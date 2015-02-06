@@ -11,6 +11,13 @@ evaluates expressions of the form:
 
 """
 
+# imports
+import numpy as np
+import scipy.optimize as opt
+
+# exports
+__all__ = ['nucnorm', 'sparse']
+
 def sfo(v, rho, optimizer, num_steps=5):
     """
     Proximal operator for an arbitrary function minimized via the Sum-of-Functions optimizer (SFO)
@@ -228,6 +235,8 @@ def tvd(v, rho, gamma):
         return denoise_tv_bregman(v, rho / gamma)
     except ImportError:
         print("Must have scikit-image installed.")
+
+    print("TODO: TVD not implemented!")
 
 def sparse(v, rho, gamma):
     """
