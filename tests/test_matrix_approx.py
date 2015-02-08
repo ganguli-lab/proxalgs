@@ -1,5 +1,5 @@
 """
-Test suite for matrix approximation using proximal algorithms
+Test suite for matrix approximation
 
 """
 
@@ -8,6 +8,7 @@ from nose import with_setup
 from nose.tools import ok_
 from proxalgs import Optimizer
 import numpy as np
+
 
 def generate_lowrank_matrix(n=10, m=20, k=3, eta=0.05, seed=1234):
     """
@@ -27,6 +28,7 @@ def generate_lowrank_matrix(n=10, m=20, k=3, eta=0.05, seed=1234):
     # the noisy, observed matrix
     x_obs = x_true + eta * np.random.randn(n, m)
 
+
 @with_setup(generate_lowrank_matrix)
 def test_lowrank_matrix_approx():
     """
@@ -35,7 +37,7 @@ def test_lowrank_matrix_approx():
     """
 
     # proximal algorithm for low rank matrix approximation
-    opt = Optimizer('fronorm', x_obs=x_obs)
+    opt = Optimizer('squared_error', x_obs=x_obs)
     opt.add_regularizer('nucnorm', gamma=0.2)
     x_hat = opt.minimize(x_obs, num_iter=100)
 

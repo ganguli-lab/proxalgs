@@ -16,7 +16,7 @@ import numpy as np
 import scipy.optimize as opt
 
 # exports
-__all__ = ['fronorm', 'nucnorm', 'sparse']
+__all__ = ['squared_error', 'nucnorm', 'sparse']
 
 def sfo(v, rho, optimizer, num_steps=5):
     """
@@ -195,7 +195,7 @@ def nucnorm(x, rho, gamma):
     # reconstruct
     return (u.dot(np.diag(sthr)).dot(v))
 
-def fronorm(x, rho, x_obs):
+def squared_error(x, rho, x_obs):
     """
     Proximal operator for the pairwise difference between two matrices (Frobenius norm)
 
