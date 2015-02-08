@@ -33,7 +33,7 @@ class Optimizer(object):
 
         self.objectives.append(wrapper)
 
-    def minimize(self, theta_init, num_iter=20, callback=None, **kwargs):
+    def minimize(self, theta_init, num_iter=20, callback=None, disp=0, **kwargs):
         """
         Minimize a list of objectives using a proximal consensus algorithm
 
@@ -51,6 +51,9 @@ class Optimizer(object):
         callback : function, optional
             a function that gets called on each iteration with the following arguments: the current parameter
             value (ndarray), and a dictionary that contains a information about the status of the algorithm
+
+        disp : integer, optional
+            determines how much information to display when running. 0 (default): nothing, 2: lots of information
 
         Returns
         -------
@@ -103,7 +106,8 @@ class Optimizer(object):
         for k in range(num_iter):
 
             # iter
-            print('[Iteration %i of %i]' % (k + 1, num_iter))
+            if disp > 0:
+                print('[Iteration %i of %i]' % (k + 1, num_iter))
 
             # update each variable copy by taking a proximal step via each objective (TODO: in parallel?)
             theta = [obj((mu - duals[idx]).reshape(orig_shape), rho[k]).ravel() for idx, obj in enumerate(self.objectives)]
