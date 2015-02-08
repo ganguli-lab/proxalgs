@@ -16,7 +16,7 @@ import numpy as np
 import scipy.optimize as opt
 
 # exports
-__all__ = ['nucnorm', 'sparse']
+__all__ = ['fronorm', 'nucnorm', 'sparse']
 
 def sfo(v, rho, optimizer, num_steps=5):
     """
@@ -31,10 +31,13 @@ def sfo(v, rho, optimizer, num_steps=5):
     ----------
     v : ndarray
         The starting or initial point used in the proximal update step
+
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to v)
+
     optimizer : SFO instance
         Instance of the SFO object in `SFO_admm.py`
+
     num_steps : int, optional
         Number of SFO steps to take
 
@@ -70,10 +73,13 @@ def poissreg(v, rho, X, y):
     ----------
     v : ndarray
         The starting or initial point used in the proximal update step
+
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to v)
+
     X : (N, k) ndarray
         A design matrix consisting of N examples of k-dimensional features (or input).
+
     y : (N,) ndarray
         A vector containing the responses (outupt) to the N features given in X.
 
@@ -103,11 +109,14 @@ def bfgs(v, rho, f, fgrad):
     ----------
     v : ndarray
         The starting or initial point used in the proximal update step
+
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to v)
+
     f : function
         The function to use when applying the proximal operator. Must take as input a parameter vector (ndarray) and
         return a real number (floating point value)
+
     df : function
         A function that computes the gradient of `f` with respect to the parameters. Must take as input a parameter
         vector (ndarray) and returns another ndarray of the same size.
@@ -134,8 +143,10 @@ def smooth_l2(v, rho, gamma):
     ----------
     v : ndarray
         The starting or initial point used in the proximal update step
+
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to v)
+
     gamma : float
         A constant that weights how strongly to enforce the constraint
 
@@ -153,16 +164,18 @@ def smooth_l2(v, rho, gamma):
     # minimize via BFGS
     return bfgs(v, rho, f, df)
 
-def nucnorm(v, rho, gamma):
+def nucnorm(x, rho, gamma):
     """
     Proximal operator for the nuclear norm (sum of the singular values of a matrix)
 
     Parameters
     ----------
-    v : ndarray
+    x : ndarray
         The starting or initial point used in the proximal update step
+
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to v)
+        Momentum parameter for the proximal step (larger value -> stays closer to x)
+
     gamma : float
         A constant that weights how strongly to enforce the constraint
 
@@ -174,7 +187,7 @@ def nucnorm(v, rho, gamma):
     """
 
     # compute SVD
-    u, s, v = np.linalg.svd(v, full_matrices=False)
+    u, s, v = np.linalg.svd(x, full_matrices=False)
 
     # soft threshold the singular values
     sthr = np.maximum(s-(gamma/float(rho)),0)
@@ -182,26 +195,28 @@ def nucnorm(v, rho, gamma):
     # reconstruct
     return (u.dot(np.diag(sthr)).dot(v))
 
-def fronorm(v, rho, v_star):
+def fronorm(x, rho, x_obs):
     """
     Proximal operator for the pairwise difference between two matrices (Frobenius norm)
 
     Parameters
     ----------
-    v : ndarray
+    x : ndarray
         The starting or initial point used in the proximal update step
+
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to v)
-    v_star : ndarray
+        Momentum parameter for the proximal step (larger value -> stays closer to x)
+
+    x_obs : ndarray
         The true matrix that we want to approximate. The error between the parameters and this matrix is minimized.
 
     Returns
     -------
-    theta : ndarray
+    x : ndarray
         The parameter vector found after running the proximal update step
 
     """
-    return (v.ravel() + v_star.ravel() / rho).reshape(v.shape) / (1 + 1/rho)
+    return (x.ravel() + x_obs.ravel() / rho).reshape(x.shape) / (1 + 1/rho)
 
 def tvd(v, rho, gamma):
     """
@@ -213,8 +228,10 @@ def tvd(v, rho, gamma):
     ----------
     v : ndarray
         The starting or initial point used in the proximal update step
+
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to v)
+
     gamma : float
         A constant that weights how strongly to enforce the constraint
 
@@ -246,8 +263,10 @@ def sparse(v, rho, gamma):
     ----------
     v : ndarray
         The starting or initial point used in the proximal update step
+
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to v)
+
     gamma : float
         A constant that weights how strongly to enforce the constraint
 
@@ -269,6 +288,7 @@ def nonneg(v, rho):
     ----------
     v : ndarray
         The starting or initial point used in the proximal update step
+
     rho : float
         Unused parameter
 
@@ -292,10 +312,13 @@ def linsys(v, rho, P, q):
     ----------
     v : ndarray
         The starting or initial point used in the proximal update step
+
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to v)
+
     P : ndarray
         The symmetric matrix A^TA, where we are trying to approximate Ax=b
+
     q : ndarray
         The vector A^Tb, where we are trying to approximate Ax=b
 
