@@ -7,7 +7,7 @@ Notes
 -----
 evaluates expressions of the form:
 
-.. math:: \mathrm{prox}_{f,rho} (v) = \mathrm{argmin}_x ( f(x) + (rho / 2) ||x-v||_2^2 )
+.. math:: \mathrm{prox}_{f,rho} (x0) = \mathrm{argmin}_x ( f(x) + (rho / 2) ||x-x0||_2^2 )
 
 """
 
@@ -18,7 +18,8 @@ import scipy.optimize as opt
 # exports
 __all__ = ['squared_error', 'nucnorm', 'sparse']
 
-def sfo(v, rho, optimizer, num_steps=5):
+
+def sfo(x0, rho, optimizer, num_steps=5):
     """
     Proximal operator for an arbitrary function minimized via the Sum-of-Functions optimizer (SFO)
 
@@ -29,11 +30,11 @@ def sfo(v, rho, optimizer, num_steps=5):
 
     Parameters
     ----------
-    v : ndarray
+    x0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to v)
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
     optimizer : SFO instance
         Instance of the SFO object in `SFO_admm.py`
@@ -55,15 +56,16 @@ def sfo(v, rho, optimizer, num_steps=5):
     """
 
     # set the current parameter value of SFO to the given value
-    optimizer.set_theta(v, float(rho))
+    optimizer.set_theta(x0, float(rho))
 
     # set the previous ADMM location as the flattened paramter array
-    optimizer.theta_admm_prev = optimizer.theta_original_to_flat(v)
+    optimizer.theta_admm_prev = optimizer.theta_original_to_flat(x0)
 
     # run the optimizer for n steps
     return optimizer.optimize(num_steps=num_steps)
 
-def poissreg(v, rho, X, y):
+
+def poissreg(x0, rho, X, y):
     """
     Proximal operator for Poisson regression
 
@@ -71,11 +73,11 @@ def poissreg(v, rho, X, y):
 
     Parameters
     ----------
-    v : ndarray
+    x0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to v)
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
     X : (N, k) ndarray
         A design matrix consisting of N examples of k-dimensional features (or input).
@@ -97,9 +99,10 @@ def poissreg(v, rho, X, y):
     df = lambda w: (X.T.dot(np.exp(X.dot(w))) - X.T.dot(y)) / N
 
     # minimize via BFGS
-    return bfgs(v, rho, f, df)
+    return bfgs(x0, rho, f, df)
 
-def bfgs(v, rho, f, fgrad):
+
+def bfgs(x0, rho, f, fgrad):
     """
     Proximal operator for minimizing an arbitrary function using BFGS
 
@@ -107,11 +110,11 @@ def bfgs(v, rho, f, fgrad):
 
     Parameters
     ----------
-    v : ndarray
+    x0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to v)
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
     f : function
         The function to use when applying the proximal operator. Must take as input a parameter vector (ndarray) and
@@ -129,23 +132,24 @@ def bfgs(v, rho, f, fgrad):
     """
 
     # specify the objective function and gradient for the proximal operator
-    g = lambda x: f(x) + (rho / 2) * np.sum((x.reshape(v.shape) - v) ** 2)
-    dg = lambda x: fgrad(x) + rho * (x.reshape(v.shape) - v)
+    g = lambda x: f(x) + (rho / 2) * np.sum((x.reshape(x0.shape) - x0) ** 2)
+    dg = lambda x: fgrad(x) + rho * (x.reshape(x0.shape) - x0)
 
     # minimize via BFGS
-    return opt.fmin_bfgs(g, v, dg, disp=False)
+    return opt.fmin_bfgs(g, x0, dg, disp=False)
 
-def smooth_l2(v, rho, gamma):
+
+def smooth_l2(v0, rho, gamma):
     """
     Proximal operator for a smoothing function enforced as an l2-penalty on pairwise differences in a vector
 
     Parameters
     ----------
-    v : ndarray
+    v0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to v)
+        Momentum parameter for the proximal step (larger value -> stays closer to v0)
 
     gamma : float
         A constant that weights how strongly to enforce the constraint
@@ -157,24 +161,25 @@ def smooth_l2(v, rho, gamma):
 
     """
     # objective and gradient
-    N = float(v.size)
+    N = float(v0.size)
     f = lambda w: 0.5 * gamma * np.sum(np.diff(w) ** 2)
     df = lambda w: gamma * (np.append(0, np.diff(w)) - np.append(np.diff(w), 0))
 
     # minimize via BFGS
-    return bfgs(v, rho, f, df)
+    return bfgs(v0, rho, f, df)
 
-def nucnorm(x, rho, gamma):
+
+def nucnorm(x0, rho, gamma):
     """
     Proximal operator for the nuclear norm (sum of the singular values of a matrix)
 
     Parameters
     ----------
-    x : ndarray
+    x0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x)
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
     gamma : float
         A constant that weights how strongly to enforce the constraint
@@ -187,7 +192,7 @@ def nucnorm(x, rho, gamma):
     """
 
     # compute SVD
-    u, s, v = np.linalg.svd(x, full_matrices=False)
+    u, s, v = np.linalg.svd(x0, full_matrices=False)
 
     # soft threshold the singular values
     sthr = np.maximum(s-(gamma/float(rho)),0)
@@ -195,30 +200,32 @@ def nucnorm(x, rho, gamma):
     # reconstruct
     return (u.dot(np.diag(sthr)).dot(v))
 
-def squared_error(x, rho, x_obs):
+
+def squared_error(x0, rho, x_obs):
     """
     Proximal operator for the pairwise difference between two matrices (Frobenius norm)
 
     Parameters
     ----------
-    x : ndarray
+    x0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x)
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
     x_obs : ndarray
         The true matrix that we want to approximate. The error between the parameters and this matrix is minimized.
 
     Returns
     -------
-    x : ndarray
+    x0 : ndarray
         The parameter vector found after running the proximal update step
 
     """
-    return (x.ravel() + x_obs.ravel() / rho).reshape(x.shape) / (1 + 1/rho)
+    return (x0.ravel() + x_obs.ravel() / rho).reshape(x0.shape) / (1 + 1/rho)
 
-def tvd(v, rho, gamma):
+
+def tvd(x0, rho, gamma):
     """
     Proximal operator for the total variation denoising penalty
 
@@ -226,11 +233,11 @@ def tvd(v, rho, gamma):
 
     Parameters
     ----------
-    v : ndarray
+    x0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to v)
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
     gamma : float
         A constant that weights how strongly to enforce the constraint
@@ -249,23 +256,24 @@ def tvd(v, rho, gamma):
 
     try:
         from skimage.restoration import denoise_tv_bregman
-        return denoise_tv_bregman(v, rho / gamma)
+        return denoise_tv_bregman(x0, rho / gamma)
     except ImportError:
         print("Must have scikit-image installed.")
 
     print("TODO: TVD not implemented!")
 
-def sparse(v, rho, gamma):
+
+def sparse(x0, rho, gamma):
     """
     Proximal operator for the l1 norm (induces sparsity)
 
     Parameters
     ----------
-    v : ndarray
+    x0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to v)
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
     gamma : float
         A constant that weights how strongly to enforce the constraint
@@ -277,16 +285,17 @@ def sparse(v, rho, gamma):
 
     """
 
-    return (v * gamma - 1./rho) * (v * gamma >= 1./rho) \
-           + (v * gamma + 1./rho) * (v * gamma <= -1./rho)
+    return (x0 * gamma - 1./rho) * (x0 * gamma >= 1./rho) \
+           + (x0 * gamma + 1./rho) * (x0 * gamma <= -1./rho)
 
-def nonneg(v, rho):
+
+def nonneg(x0, rho):
     """
     Proximal operator for enforcing non-negativity (indicator function over the set x >= 0)
 
     Parameters
     ----------
-    v : ndarray
+    x0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
@@ -298,9 +307,10 @@ def nonneg(v, rho):
         The parameter vector found after running the proximal update step
 
     """
-    return np.maximum(v, 0)
+    return np.maximum(x0, 0)
 
-def linsys(v, rho, P, q):
+
+def linsys(x0, rho, P, q):
     """
     Proximal operator for the linear approximation Ax = b
 
@@ -310,11 +320,11 @@ def linsys(v, rho, P, q):
 
     Parameters
     ----------
-    v : ndarray
+    x0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to v)
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
     P : ndarray
         The symmetric matrix A^TA, where we are trying to approximate Ax=b
@@ -328,4 +338,4 @@ def linsys(v, rho, P, q):
         The parameter vector found after running the proximal update step
 
     """
-    return np.linalg.solve(rho * np.eye(q.size) + P, rho * v.copy() + q)
+    return np.linalg.solve(rho * np.eye(q.size) + P, rho * x0.copy() + q)
