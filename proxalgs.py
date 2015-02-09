@@ -19,6 +19,7 @@ class Optimizer(object):
 
         self.objectives = list()
         self.add_regularizer(objfun, **kwargs)
+        self.converged = False
 
     def __str__(self):
         return "foobaz"
@@ -81,10 +82,14 @@ class Optimizer(object):
         tau_dec : int, optional
             decrement parameter for the momentum scheduler (default: 2)
 
+        tol : float, optional
+            residual tolerance for assessing convergence. if both the primal and dual residuals are less
+            than this value, then the algorithm has converged
+
         """
 
         # default options / parameter values
-        opt = {'rho_init': 10, 'tau_inc': 2, 'tau_dec': 2}
+        opt = {'rho_init': 10, 'tau_inc': 2, 'tau_dec': 2, 'tol': 1e-4}
         opt.update(kwargs)
 
         # get list of objectives for this parameter
@@ -110,11 +115,15 @@ class Optimizer(object):
         runtimes = list()
         tstart = time.time()
 
-        for k in range(num_iter):
+        # udpate each iteration
+        if disp > 1:
+            print('-------------------------------------------------------------------------')
+            print('|  ELAPSED TIME (s) \t|  PRIMAL RESIDUAL \t|  DUAL RESIDUAL \t|')
+            print('-------------------------------------------------------------------------')
 
-            # iter
-            if disp > 0:
-                print('[Iteration %i of %i]' % (k + 1, num_iter))
+        # run ADMM iterations
+        self.converged = False
+        for k in range(num_iter):
 
             # update each variable copy by taking a proximal step via each objective (TODO: in parallel?)
             for idx, x in enumerate(primals):
@@ -149,16 +158,29 @@ class Optimizer(object):
             else:
                 rho[k + 1] = rho[k]
 
-            # more to display?
-            if disp > 1:
-                print('> Elapsed time: %5.4f s' % runtimes[-1])
-                print('> Primal residual: %5.4f s' % rk)
-                print('> Dual residual: %5.4f s' % sk)
+            # display
+            if disp == 1:
+                print('Iteration %i of %i' % (k + 1, num_iter))
+
+            elif disp > 1:
+                print('| %10.4f \t\t| %16.8f \t| %16.8f \t|' % (runtimes[-1], rk, sk))
 
             # call the callback function
             if callback is not None:
                 results = {'residuals': resid, 'rho': rho, 'duals': duals, 'runtimes': runtimes, 'primals': primals}
                 callback(mu[-1].reshape(orig_shape), results)
+
+            # check for convergence
+            if (rk <= opt['tol']) & (sk <= opt['tol']):
+                self.converged = True
+                break
+
+        # clean up
+        if disp > 1:
+            print('-------------------------------------------------------------------------\n')
+
+        if self.converged and disp > 0:
+            print('Converged after %i iterations!' % (k+1))
 
         self.results = {'residuals': resid, 'rho': rho, 'duals': duals, 'runtimes': runtimes, 'primals': primals}
         self.theta = mu[-1].reshape(orig_shape)
