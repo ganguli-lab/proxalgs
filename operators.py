@@ -16,7 +16,7 @@ import numpy as np
 import scipy.optimize as opt
 
 # exports
-__all__ = ['squared_error', 'nucnorm', 'sparse']
+__all__ = ['squared_error', 'nucnorm', 'sparse', 'tvd']
 
 
 def sfo(x0, rho, optimizer, num_steps=5):
@@ -161,7 +161,6 @@ def smooth_l2(v0, rho, gamma):
 
     """
     # objective and gradient
-    N = float(v0.size)
     f = lambda w: 0.5 * gamma * np.sum(np.diff(w) ** 2)
     df = lambda w: gamma * (np.append(0, np.diff(w)) - np.append(np.diff(w), 0))
 
@@ -222,7 +221,7 @@ def squared_error(x0, rho, x_obs):
         The parameter vector found after running the proximal update step
 
     """
-    return (x0.ravel() + x_obs.ravel() / rho).reshape(x0.shape) / (1 + 1/rho)
+    return (x0 + x_obs / rho) / (1 + 1/rho)
 
 
 def tvd(x0, rho, gamma):
@@ -259,8 +258,6 @@ def tvd(x0, rho, gamma):
         return denoise_tv_bregman(x0, rho / gamma)
     except ImportError:
         print("Must have scikit-image installed.")
-
-    print("TODO: TVD not implemented!")
 
 
 def sparse(x0, rho, gamma):

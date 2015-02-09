@@ -8,7 +8,7 @@ A proximal consensus optimization algorithm
 # imports
 import time
 import numpy as np
-import operators
+import operators, tensors
 
 # exports
 __all__ = ['minimize', 'add_regularizer']
@@ -30,6 +30,13 @@ class Optimizer(object):
 
         def wrapper(theta, rho):
             return getattr(operators, proxfun)(theta.copy(), float(rho), **kwargs)
+
+        self.objectives.append(wrapper)
+
+    def add_tensor_regularizer(self, proxfun, **kwargs):
+
+        def wrapper(theta, rho):
+            return getattr(tensors, proxfun)(theta.copy(), float(rho), **kwargs)
 
         self.objectives.append(wrapper)
 
@@ -136,6 +143,12 @@ class Optimizer(object):
                 rho[k + 1] = rho[k] / opt['tau_dec']
             else:
                 rho[k + 1] = rho[k]
+
+            # more to display?
+            if disp > 1:
+                primal_resid = np.mean([np.linalg.norm(k) for k in resid['primal']])
+                dual_resid = np.mean([np.linalg.norm(k) for k in resid['dual']])
+                print('> [%5.4f s]\tprimal residual: %5.4f\tdual residual: %5.4f' % (runtimes[-1], primal_resid, dual_resid))
 
             # call the callback function
             if callback is not None:
