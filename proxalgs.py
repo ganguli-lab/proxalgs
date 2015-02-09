@@ -93,20 +93,20 @@ class Optimizer(object):
 
         # initialize lists of primal and dual variable copies, one for each objective
         orig_shape = theta_init.shape
-        theta = [theta_init.flatten() for _ in range(num_obj)]
+        primals = [theta_init.flatten() for _ in range(num_obj)]
         duals = [np.zeros(theta_init.size) for _ in range(num_obj)]
-        mu = np.mean(theta, axis=0).ravel()
+        mu = [np.mean(primals, axis=0).ravel()]
 
         # store primal and dual residuals
         resid = dict()
-        resid['primal'] = np.zeros((num_iter, num_obj))
-        resid['dual'] = np.zeros(num_iter)
+        resid['primal'] = list()
+        resid['dual'] = list()
 
         # penalty parameter scheduling (see sect. 3.4.1 of the Boyd and Parikh ADMM paper)
         rho = np.zeros(num_iter + 1)
         rho[0] = opt['rho_init']
 
-        # store runtimes of each iteration
+        # store cumulative runtimes of each iteration
         runtimes = list()
         tstart = time.time()
 
@@ -117,26 +117,31 @@ class Optimizer(object):
                 print('[Iteration %i of %i]' % (k + 1, num_iter))
 
             # update each variable copy by taking a proximal step via each objective (TODO: in parallel?)
-            theta = [obj((mu - duals[idx]).reshape(orig_shape), rho[k]).ravel() for idx, obj in enumerate(self.objectives)]
+            for idx, x in enumerate(primals):
 
-            # average local variables
-            mu_prev = mu.copy()
-            mu = np.mean(theta, axis=0).copy()
+                # unpack objective
+                obj = self.objectives[idx]
 
-            # dual update
-            for objective_index, theta_idx in enumerate(theta):
-                duals[objective_index] += theta_idx - mu
+                # evaluate objective (proximity operator) to update primals
+                primals[idx] = obj((-duals[idx] + mu[-1]).reshape(orig_shape), rho[k]).ravel()
+
+            # average primal copies
+            mu.append(np.mean(primals, axis=0).copy())
+
+            # update the dual variables (after primal update has finished!)
+            for idx, x in enumerate(primals):
+                duals[idx] += x - mu[-1]
 
             # compute primal and dual residuals
-            resid['primal'][k, :] = np.linalg.norm(np.vstack(theta) - mu, axis=1)
-            resid['dual'][k] = np.sqrt(num_obj) * rho[k] * np.linalg.norm(mu - mu_prev)
+            rk = np.sum([np.linalg.norm(x - mu[-1]) for x in primals])
+            sk = num_obj * rho[k] ** 2 * np.linalg.norm(mu[-1] - mu[-2])
+            resid['primal'].append(rk)
+            resid['dual'].append(sk)
 
             # store runtime
             runtimes.append(time.time() - tstart)
 
             # update penalty parameter according to primal and dual residuals
-            rk = np.linalg.norm(resid['primal'][k,:])
-            sk = resid['dual'][k]
             if rk > opt['rho_init'] * sk:
                 rho[k + 1] = opt['tau_inc'] * rho[k]
             elif sk > opt['rho_init'] * rk:
@@ -146,15 +151,15 @@ class Optimizer(object):
 
             # more to display?
             if disp > 1:
-                primal_resid = np.mean([np.linalg.norm(k) for k in resid['primal']])
-                dual_resid = np.mean([np.linalg.norm(k) for k in resid['dual']])
-                print('> [%5.4f s]\tprimal residual: %5.4f\tdual residual: %5.4f' % (runtimes[-1], primal_resid, dual_resid))
+                print('> Elapsed time: %5.4f s' % runtimes[-1])
+                print('> Primal residual: %5.4f s' % rk)
+                print('> Dual residual: %5.4f s' % sk)
 
             # call the callback function
             if callback is not None:
-                res = {'resid': resid, 'rho': rho, 'duals': duals, 'runtimes': runtimes, 'primals': theta}
-                callback(mu.reshape(orig_shape), res)
+                results = {'residuals': resid, 'rho': rho, 'duals': duals, 'runtimes': runtimes, 'primals': primals}
+                callback(mu[-1].reshape(orig_shape), results)
 
-        self.res = {'resid': resid, 'rho': rho, 'duals': duals, 'runtimes': runtimes, 'primals': theta}
-        self.theta = mu.reshape(orig_shape)
+        self.results = {'residuals': resid, 'rho': rho, 'duals': duals, 'runtimes': runtimes, 'primals': primals}
+        self.theta = mu[-1].reshape(orig_shape)
         return self.theta
