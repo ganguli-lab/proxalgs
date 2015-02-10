@@ -1,4 +1,17 @@
 # Proximal Algorithms
 
-Niru Maheswaranathan
-Feb 6 2015
+## Installation
+```bash
+$ git clone git@github.com:ganguli-lab/proxalgs.git
+$ cd proxalgs
+$ pip install -r requirements.txt
+$ python setup.py install
+```
+
+## Todo
+- documentation
+- more support for operations on unfolded tensors
+- parallelization
+
+## Contact
+Niru Maheswaranathan (nirum@stanford.edu)
