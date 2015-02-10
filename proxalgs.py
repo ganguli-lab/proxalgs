@@ -143,7 +143,7 @@ class Optimizer(object):
                 duals[idx] += x - mu[-1]
 
             # compute primal and dual residuals
-            rk = np.sum([np.linalg.norm(x - mu[-1]) for x in primals])
+            rk = float(np.sum([np.linalg.norm(x - mu[-1]) for x in primals]))
             sk = num_obj * rho[k] ** 2 * np.linalg.norm(mu[-1] - mu[-2])
             resid['primal'].append(rk)
             resid['dual'].append(sk)
@@ -243,7 +243,7 @@ class Optimizer(object):
 
             return {
                 'loss': loss,
-                'runtime': self.results['runtimes'][-1]
+                'runtime': self.results['runtimes'][-1],
                 'primal_residual': self.results['residuals']['primal'],
                 'dual_residual': self.results['residuals']['dual'],
                 'num_iter': self.results['numiter']
