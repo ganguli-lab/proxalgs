@@ -168,7 +168,7 @@ def smooth(x0, rho, gamma):
     return spsolve(gamma * A, rho * x0)
 
 
-def nucnorm(x0, rho, gamma):
+def nucnorm(x0, rho, gamma, mode=None):
     """
     Proximal operator for the nuclear norm (sum of the singular values of a matrix)
 
@@ -183,6 +183,11 @@ def nucnorm(x0, rho, gamma):
     gamma : float
         A constant that weights how strongly to enforce the constraint
 
+    model : int, optional
+        If None (default), then the input is treated as a numpy array. If an integer, it is
+        treated as a tensor object and the nuclear norm is applied to an unfolding of
+        the tensor (using the array axis given by mode).
+
     Returns
     -------
     theta : ndarray
@@ -190,14 +195,26 @@ def nucnorm(x0, rho, gamma):
 
     """
 
+    # if tensor, generate unfolded array
+    if mode is not None:
+        x_temp = x0.unfold(mode)
+    else:
+        x_temp = x0
+
     # compute SVD
-    u, s, v = np.linalg.svd(x0, full_matrices=False)
+    u, s, v = np.linalg.svd(x_temp, full_matrices=False)
 
     # soft threshold the singular values
     sthr = np.maximum(s-(gamma/float(rho)),0)
 
     # reconstruct
-    return (u.dot(np.diag(sthr)).dot(v))
+    x_out = (u.dot(np.diag(sthr)).dot(v))
+
+    # if tensor, refold
+    if mode is not None:
+        x_out = x_out.fold()
+
+    return x_out
 
 
 def squared_error(x0, rho, x_obs):
