@@ -1,7 +1,9 @@
 """
 Proximal operators
 
-Evaluates proximal operators
+Evaluates proximal operators for various functions.
+
+TODO: flesh out details
 
 Notes
 -----

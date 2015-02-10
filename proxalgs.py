@@ -15,6 +15,27 @@ import hyperopt
 __all__ = ['minimize', 'add_regularizer']
 
 class Optimizer(object):
+    """
+    Optimizer class for running proximal algorithms
+
+    Usage
+    -----
+    To initialize an Optimizer object, pass the name of the desired objective function from the operators
+    module (and any additional arguments needed for that function). Then, add any desired regularizers along
+    with the necessary hyperparameters for those functions. Finally, use the minimize() function to run
+    a proximal consensus algorithm for your problem.
+
+    >> opt = Optimizer('squared_error', x_obs=x_obs)
+    >> opt.add_regularizer('sparse', gamma=0.1)
+    >> opt.add_regularizer('nucnorm', gamma=0.5)
+    >> x_hat = opt.minimize(x_init)
+
+    Notes
+    -----
+    TODO: Add citations
+    TODO: Add a demo notebook
+
+    """
 
     def __init__(self, objfun, **kwargs):
 
