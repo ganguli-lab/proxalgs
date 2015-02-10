@@ -14,6 +14,8 @@ evaluates expressions of the form:
 # imports
 import numpy as np
 import scipy.optimize as opt
+from scipy.sparse import spdiags
+from scipy.sparse.linalg import spsolve
 
 # exports
 __all__ = ['squared_error', 'nucnorm', 'sparse', 'tvd']
@@ -139,17 +141,17 @@ def bfgs(x0, rho, f, fgrad):
     return opt.fmin_bfgs(g, x0, dg, disp=False)
 
 
-def smooth_l2(v0, rho, gamma):
+def smooth(x0, rho, gamma):
     """
-    Proximal operator for a smoothing function enforced as an l2-penalty on pairwise differences in a vector
+    Proximal operator for a smoothing function enforced via the discrete laplacian operator
 
     Parameters
     ----------
-    v0 : ndarray
+    x0 : ndarray
         The starting or initial point used in the proximal update step
 
     rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to v0)
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
     gamma : float
         A constant that weights how strongly to enforce the constraint
@@ -160,12 +162,10 @@ def smooth_l2(v0, rho, gamma):
         The parameter vector found after running the proximal update step
 
     """
-    # objective and gradient
-    f = lambda w: 0.5 * gamma * np.sum(np.diff(w) ** 2)
-    df = lambda w: gamma * (np.append(0, np.diff(w)) - np.append(np.diff(w), 0))
 
-    # minimize via BFGS
-    return bfgs(v0, rho, f, df)
+    n = x0.shape[0]
+    A = spdiags([(2+rho/gamma) * np.ones(n), -1 * np.ones(n), -1 * np.ones(n)], [0, -1, 1], n, n, format='csc')
+    return spsolve(gamma * A, rho * x0)
 
 
 def nucnorm(x0, rho, gamma):
