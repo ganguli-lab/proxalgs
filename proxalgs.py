@@ -228,7 +228,7 @@ class Optimizer(object):
         self.theta = mu[-1].reshape(orig_shape)
         return self.theta
 
-    def hyperopt(self, regularizers, validation_loss, theta_init, num_runs):
+    def hyperopt(self, regularizers, validation_loss, theta_init, num_runs, num_iter=50):
         """
         Learn hyperparameters
 
@@ -295,7 +295,7 @@ class Optimizer(object):
                 filter(lambda v: not isinstance(v[0], str), regs))
 
             # run the minimizer
-            x_hat = self.minimize(theta_init, num_iter=100, disp=2)
+            x_hat = self.minimize(theta_init, num_iter=num_iter, disp=2)
 
             # test on the validation set
             loss = validation_loss(x_hat)
