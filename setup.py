@@ -35,6 +35,5 @@ setup(name='proxalgs',
           'Topic :: Scientific/Engineering :: Information Analysis'],
       packages=['proxalgs'],
       package_dir={'proxalgs': ''},
-      py_modules=['proxalgs,operators'],
-      license='LICENSE.md'
+      py_modules=['proxalgs,operators']
 )
