@@ -50,9 +50,28 @@ class Optimizer(object):
         return "foobaz"
 
     def add_regularizer(self, proxfun, **kwargs):
+        """
+        Add a regularizer from the operators module
+
+        TODO: more details
+
+        """
 
         def wrapper(theta, rho):
             return getattr(operators, proxfun)(theta.copy(), float(rho), **kwargs)
+
+        self.objectives.append(wrapper)
+
+    def add_custom_regularizer(self, fun, **kwargs):
+        """
+        Add a custom regularizer / proximal operator
+
+        TODO: more details
+
+        """
+
+        def wrapper(theta, rho):
+            return fun(theta.copy(), float(rho), **kwargs)
 
         self.objectives.append(wrapper)
 
@@ -215,11 +234,13 @@ class Optimizer(object):
 
         Parameters
         ----------
-        regularizers : dict
-            The set of regularizers to search over. Each key in the dictionary needs to be the name of a
-            corresponding function in the operators module, and the value associated with that key is a tuple
-            containing the bounds for the search space on a log scale. E.g. (-3,0) will search the space from
-            for the regularizer from 0.001 to 1.
+        regularizers : list
+            A list of tuples. Each tuple contains four items. The first is a string (the name of the regularizer,
+            which can be anything you want). The second is EITHER a string and the name of a function in the operators
+            module which has three arguments (x0, rho, gamma) OR a custom function that accepts three arguments
+            (x0, rho, and gamma) and applies a proximal operator to the point x0. The final two parameters are floats
+            which define the bounds of the log-transformed search space for the regularization parameters (e.g bounds
+            of -3 and 0 would correspond to searching values from 0.001 to 1)
 
         validation_loss : function
             A callback function that takes a single argument, a value for the parameters, and evaluates the error or
@@ -242,10 +263,19 @@ class Optimizer(object):
 
         """
 
-        # make sure things are initialized correctly
-        for proxfun in regularizers:
-            assert getattr(operators, proxfun, None) is not None, "Could not find function " + proxfun + "() in operators.py"
-            assert len(regularizers[proxfun]) == 2, "Each key in regularizers must be associated with a length 2 tuple"
+        # verify inputs are the right type
+        for (name, proxfun, lb, ub) in regularizers:
+
+            # name must be a string
+            assert isinstance(name, str), "Name must be a string"
+
+            # proxfun must exist in operators if given as a string
+            if isinstance(proxfun, str):
+                assert getattr(operators, proxfun, None) is not None, "Could not find " + proxfun + "() in operators.py"
+
+            # lower and upper bounds must be numbers
+            assert isinstance(lb, (int, float)), "Lower bound must be a number"
+            assert isinstance(ub, (int, float)), "Upper bound must be a number"
 
         # define the meta-objective over the hyperparameters
         def metaobjective(gammas):
@@ -253,8 +283,16 @@ class Optimizer(object):
             # clear previous regularizers
             self.clear_regularizers()
 
-            # add regularizers with the given hyperparameters
-            map(lambda v: self.add_regularizer(v[0], gamma=v[1]), zip(regularizers.keys(), gammas))
+            # concatenate regularizers with gamma values
+            regs = [(reg[0][1], reg[1]) for reg in zip(regularizers, gammas)]
+
+            # add regularizers with the given hyperparameters (given names of functions in operators.py)
+            map(lambda x: self.add_regularizer(x[0], gamma=x[1]),
+                filter(lambda v: isinstance(v[0], str), regs))
+
+            # add regularizers with the given hyperparameters (given custom functions)
+            map(lambda x: self.add_custom_regularizer(x[0], gamma=x[1]),
+                filter(lambda v: not isinstance(v[0], str), regs))
 
             # run the minimizer
             x_hat = self.minimize(theta_init, num_iter=100, disp=2)
@@ -271,7 +309,7 @@ class Optimizer(object):
             }
 
         # build the search space consisting of loguniform ranges of the given values in the regularizers dictionary
-        searchspace = map(lambda v: hyperopt.hp.loguniform(v[0], v[1][0], v[1][1]), regularizers.items())
+        searchspace = map(lambda x: hyperopt.hp.loguniform(x[0], x[2], x[3]), regularizers)
 
         # store results in hyperopt trials object
         self.hyperopt_trials = hyperopt.Trials()
