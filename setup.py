@@ -21,11 +21,7 @@ setup(name='proxalgs',
       author='Niru Maheshwaranathan',
       author_email='nirum@stanford.edu',
       url='https://github.com/ganguli-lab/proxalgs',
-      install_requires=install_requires,
-      extras_require={
-          'testing': tests_require,
-          'docs': docs_require
-      },
+      requires=install_requires,
       keywords="",
       license="MIT",
       long_description=README,
