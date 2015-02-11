@@ -12,7 +12,7 @@ import operators
 import hyperopt
 
 # exports
-__all__ = ['minimize', 'add_regularizer']
+__all__ = ['Optimizer']
 
 class Optimizer(object):
     """
@@ -303,8 +303,8 @@ class Optimizer(object):
             return {
                 'loss': loss,
                 'runtime': self.results['runtimes'][-1],
-                'primal_residual': self.results['residuals']['primal'],
-                'dual_residual': self.results['residuals']['dual'],
+                'primal_residual': self.results['residuals']['primal'][-1],
+                'dual_residual': self.results['residuals']['dual'][-1],
                 'num_iter': self.results['numiter']
             }
 
