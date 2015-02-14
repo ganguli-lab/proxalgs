@@ -18,6 +18,7 @@ import numpy as np
 import scipy.optimize as opt
 from scipy.sparse import spdiags
 from scipy.sparse.linalg import spsolve
+from sktensor import dtensor
 
 # exports
 __all__ = ['squared_error', 'nucnorm', 'sparse', 'tvd']
@@ -143,7 +144,7 @@ def bfgs(x0, rho, f, fgrad):
     return opt.fmin_bfgs(g, x0, dg, disp=False)
 
 
-def smooth(x0, rho, gamma):
+def smooth(x0, rho, gamma, mode=None):
     """
     Proximal operator for a smoothing function enforced via the discrete laplacian operator
 
@@ -158,6 +159,11 @@ def smooth(x0, rho, gamma):
     gamma : float
         A constant that weights how strongly to enforce the constraint
 
+    model : int, optional
+        If None (default), then the input is treated as a numpy array. If an integer, it is
+        treated as a tensor object and the smoothing is applied to the columns of an unfolding of
+        the tensor (using the array axis given by mode).
+
     Returns
     -------
     theta : ndarray
@@ -165,9 +171,23 @@ def smooth(x0, rho, gamma):
 
     """
 
-    n = x0.shape[0]
+    # if tensor, generate unfolded array
+    if mode is not None:
+        x_temp = dtensor(x0).unfold(mode)
+    else:
+        x_temp = x0
+
+    # Apply Laplacian smoothing
+    n = x_temp.shape[0]
     A = spdiags([(2+rho/gamma) * np.ones(n), -1 * np.ones(n), -1 * np.ones(n)], [0, -1, 1], n, n, format='csc')
-    return spsolve(gamma * A, rho * x0)
+    x_out = spsolve(gamma * A, rho * x_temp)
+
+    if mode is not None:
+        tmp = x_temp.copy()
+        tmp[:,:] = x_out[:,:]
+        x_out = tmp.fold()
+
+    return x_out
 
 
 def nucnorm(x0, rho, gamma, mode=None):
@@ -199,7 +219,7 @@ def nucnorm(x0, rho, gamma, mode=None):
 
     # if tensor, generate unfolded array
     if mode is not None:
-        x_temp = x0.unfold(mode)
+        x_temp = dtensor(x0).unfold(mode)
     else:
         x_temp = x0
 
