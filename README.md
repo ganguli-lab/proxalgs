@@ -2,10 +2,10 @@
 
 ## Installation
 ```bash
-$ git clone git@github.com:ganguli-lab/proxalgs.git
-$ cd proxalgs
-$ pip install -r requirements.txt
-$ python setup.py install
+git clone git@github.com:ganguli-lab/proxalgs.git
+cd proxalgs
+pip install -r requirements.txt
+python setup.py install
 ```
 
 ## Requirements
@@ -16,9 +16,8 @@ Pull requests are strongly encouraged! Please stick to the [NumPy/SciPy document
 We use `sphinx` for documentation and `nose` for testing.
 
 ## Todo
-- documentation
 - more support for operations on unfolded tensors
-- parallelization
+- parallelization of the various proximal updates
 
 ## Contact
 Niru Maheswaranathan (nirum@stanford.edu)
