@@ -1,7 +1,7 @@
 import os
 from distutils.core import setup
 
-version = '0.1'
+version = '0.1.0'
 
 here = os.path.abspath(os.path.dirname(__file__))
 try:
@@ -22,8 +22,7 @@ setup(name='proxalgs',
       author_email='nirum@stanford.edu',
       url='https://github.com/ganguli-lab/proxalgs',
       requires=install_requires,
-      keywords="",
-      license="MIT",
+      license='MIT',
       long_description=README,
       classifiers=[
           'Intended Audience :: Science/Research',
