@@ -29,7 +29,5 @@ setup(name='proxalgs',
           'Intended Audience :: Science/Research',
           'Operating System :: MacOS :: MacOS X',
           'Topic :: Scientific/Engineering :: Information Analysis'],
-      packages=['proxalgs'],
-      package_dir={'proxalgs': ''},
-      py_modules=['proxalgs,operators']
+      packages=['proxalgs']
 )

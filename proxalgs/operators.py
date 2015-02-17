@@ -20,9 +20,6 @@ from scipy.sparse import spdiags
 from scipy.sparse.linalg import spsolve
 from sktensor import dtensor
 
-# exports
-__all__ = ['squared_error', 'nucnorm', 'sparse', 'tvd']
-
 
 def sfo(x0, rho, optimizer, num_steps=5):
     """
