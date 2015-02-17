@@ -12,7 +12,7 @@ python setup.py install
 Numpy, scipy, and [hyperopt](https://github.com/hyperopt/hyperopt).
 
 ## Development
-Pull requests are strongly encouraged! Please stick to the [NumPy/SciPy documentation standards](https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard)
+Pull requests welcome! Please stick to the [NumPy/SciPy documentation standards](https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard)
 We use `sphinx` for documentation and `nose` for testing.
 
 ## Todo
