@@ -1,0 +1,18 @@
+v0.1 (February 17 2015)
+=======================
+
+Initial release! Woo!
+
+Sketched out the ``Optimizer`` class in ``core.py``, and added a number of useful proximal operators in ``operators.py``.
+
+API Overview
+------------
+- The main functions of the ``Optimizer`` class are ``add_regularizer`` and ``minimize``
+- The functions in ``operator`` can mostly be used by passing function names as strings to ``Optimizer.add_regularizer``
+- Rudimentary support for hyperparameter optimization is provided by the ``Optimizer.hyperopt`` function
+
+Known Issues
+------------
+- Documentation needs to be fleshed out
+- The support for tensor operations is not very clean. Still thinking about the best way to do this
+- Tests have been written for two toy cases, low-rank matrix approximation and sparse regression

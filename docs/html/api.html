@@ -1,0 +1,737 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Reference &mdash; proxalgs 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="proxalgs 0.1.0 documentation" href="index.html"/>
+        <link rel="prev" title="Quickstart" href="quickstart.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> proxalgs</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#development">Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#bugs">Bugs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#background">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#demo-sparse-regression">Demo - sparse regression</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-proxalgs.core">proxalgs.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-proxalgs.operators">proxalgs.operators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v0-1-february-17-2015">v0.1 (February 17 2015)</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">proxalgs</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/api.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-proxalgs.core">
+<span id="proxalgs-core"></span><h2>proxalgs.core<a class="headerlink" href="#module-proxalgs.core" title="Permalink to this headline">¶</a></h2>
+<p>Proximal algorithms</p>
+<p>A proximal consensus optimization algorithm</p>
+<dl class="class">
+<dt id="proxalgs.core.Optimizer">
+<em class="property">class </em><tt class="descclassname">proxalgs.core.</tt><tt class="descname">Optimizer</tt><big>(</big><em>objfun</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>Optimizer class for running proximal algorithms</p>
+<p class="rubric">Notes</p>
+<p>TODO: Add citations
+TODO: Add a demo notebook</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#proxalgs.core.Optimizer.add_custom_regularizer" title="proxalgs.core.Optimizer.add_custom_regularizer"><tt class="xref py py-obj docutils literal"><span class="pre">add_custom_regularizer</span></tt></a>(fun,&nbsp;**kwargs)</td>
+<td>Add a custom regularizer / proximal operator</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proxalgs.core.Optimizer.add_regularizer" title="proxalgs.core.Optimizer.add_regularizer"><tt class="xref py py-obj docutils literal"><span class="pre">add_regularizer</span></tt></a>(proxfun,&nbsp;**kwargs)</td>
+<td>Add a regularizer from the operators module</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proxalgs.core.Optimizer.clear_regularizers" title="proxalgs.core.Optimizer.clear_regularizers"><tt class="xref py py-obj docutils literal"><span class="pre">clear_regularizers</span></tt></a>()</td>
+<td>Clear any added regularizers (only retains the first objective)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proxalgs.core.Optimizer.hyperopt" title="proxalgs.core.Optimizer.hyperopt"><tt class="xref py py-obj docutils literal"><span class="pre">hyperopt</span></tt></a>(regularizers,&nbsp;validation_loss,&nbsp;...)</td>
+<td>Learn hyperparameters</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proxalgs.core.Optimizer.minimize" title="proxalgs.core.Optimizer.minimize"><tt class="xref py py-obj docutils literal"><span class="pre">minimize</span></tt></a>(theta_init[,&nbsp;num_iter,&nbsp;callback,&nbsp;disp])</td>
+<td>Minimize a list of objectives using a proximal consensus algorithm</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="proxalgs.core.Optimizer.add_custom_regularizer">
+<tt class="descname">add_custom_regularizer</tt><big>(</big><em>fun</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.add_custom_regularizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a custom regularizer / proximal operator</p>
+<p>TODO: more details</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proxalgs.core.Optimizer.add_regularizer">
+<tt class="descname">add_regularizer</tt><big>(</big><em>proxfun</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.add_regularizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a regularizer from the operators module</p>
+<p>TODO: more details</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proxalgs.core.Optimizer.clear_regularizers">
+<tt class="descname">clear_regularizers</tt><big>(</big><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.clear_regularizers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear any added regularizers (only retains the first objective)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proxalgs.core.Optimizer.hyperopt">
+<tt class="descname">hyperopt</tt><big>(</big><em>regularizers</em>, <em>validation_loss</em>, <em>theta_init</em>, <em>num_runs</em>, <em>num_iter=50</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.hyperopt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Learn hyperparameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>regularizers</strong> : list</p>
+<blockquote>
+<div><p>A list of tuples. Each tuple contains four items. The first is a string (the name of the regularizer,
+which can be anything you want). The second is EITHER a string and the name of a function in the operators
+module which has three arguments (x0, rho, gamma) OR a custom function that accepts three arguments
+(x0, rho, and gamma) and applies a proximal operator to the point x0. The final two parameters are floats
+which define the bounds of the log-transformed search space for the regularization parameters (e.g bounds
+of -3 and 0 would correspond to searching values from 0.001 to 1)</p>
+</div></blockquote>
+<p><strong>validation_loss</strong> : function</p>
+<blockquote>
+<div><p>A callback function that takes a single argument, a value for the parameters, and evaluates the error or
+loss on some held out data.</p>
+</div></blockquote>
+<p><strong>theta_init</strong> : array_like</p>
+<blockquote>
+<div><p>An array corresponding to the initial parameter values for optimization</p>
+</div></blockquote>
+<p><strong>num_runs</strong> : int</p>
+<blockquote>
+<div><p>The number of different hyperparameter combinations to search through</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>gamma_opt</strong> : dict</p>
+<blockquote>
+<div><p>a dictionary containing the optimal hyperparameters found. Each key is a regularizer with a
+corresponding function in the operators module, and each value is the learned hyperparameter value</p>
+</div></blockquote>
+<p><strong>trials</strong> : dict</p>
+<blockquote class="last">
+<div><p>Results object from hyperopt.fmin()</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="proxalgs.core.Optimizer.minimize">
+<tt class="descname">minimize</tt><big>(</big><em>theta_init</em>, <em>num_iter=20</em>, <em>callback=None</em>, <em>disp=0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.minimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimize a list of objectives using a proximal consensus algorithm</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>objectives</strong> : list</p>
+<blockquote>
+<div><p>List of objectives, each objective is a function that computes a proximal update.</p>
+</div></blockquote>
+<p><strong>theta_init</strong> : ndarray</p>
+<blockquote>
+<div><p>Initial parameter vector (numpy array)</p>
+</div></blockquote>
+<p><strong>num_iter</strong> : int, optional</p>
+<blockquote>
+<div><p>number of iterations to run (default: 20)</p>
+</div></blockquote>
+<p><strong>callback</strong> : function, optional</p>
+<blockquote>
+<div><p>a function that gets called on each iteration with the following arguments: the current parameter
+value (ndarray), and a dictionary that contains a information about the status of the algorithm</p>
+</div></blockquote>
+<p><strong>disp</strong> : integer, optional</p>
+<blockquote>
+<div><p>determines how much information to display when running. 0 (default): nothing, 2: lots of information</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<blockquote>
+<div><p>The parameters found after running the optimization procedure</p>
+</div></blockquote>
+<p><strong>res</strong> : dict</p>
+<blockquote>
+<div><p>A dictionary containing results and other information about convergence of the algorithm</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>rho_init</strong> : int, optional</p>
+<blockquote>
+<div><p>initial value of the momentum term, larger values take smaller steps (default: 10)</p>
+</div></blockquote>
+<p><strong>tau_inc</strong> : int, optional</p>
+<blockquote>
+<div><p>increment parameter for the momentum scheduler (default: 2)</p>
+</div></blockquote>
+<p><strong>tau_dec</strong> : int, optional</p>
+<blockquote>
+<div><p>decrement parameter for the momentum scheduler (default: 2)</p>
+</div></blockquote>
+<p><strong>tol</strong> : float, optional</p>
+<blockquote class="last">
+<div><p>residual tolerance for assessing convergence. if both the primal and dual residuals are less
+than this value, then the algorithm has converged</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-proxalgs.operators">
+<span id="proxalgs-operators"></span><h2>proxalgs.operators<a class="headerlink" href="#module-proxalgs.operators" title="Permalink to this headline">¶</a></h2>
+<p>Proximal operators</p>
+<p>Evaluates proximal operators for various functions.</p>
+<p>TODO: flesh out details</p>
+<div class="section" id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h3>
+<p>evaluates expressions of the form:</p>
+<div class="math">
+\[\mathrm{prox}_{f,rho} (x0) = \mathrm{argmin}_x ( f(x) + (rho / 2) ||x-x0||_2^2 )\]</div>
+<dl class="function">
+<dt id="proxalgs.operators.bfgs">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">bfgs</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>f</em>, <em>fgrad</em><big>)</big><a class="headerlink" href="#proxalgs.operators.bfgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proximal operator for minimizing an arbitrary function using BFGS</p>
+<p>Uses the BFGS algorithm to find the proximal update for an arbitrary function, <cite>f</cite>, whose gradient is known.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
+</div></blockquote>
+<p><strong>f</strong> : function</p>
+<blockquote>
+<div><p>The function to use when applying the proximal operator. Must take as input a parameter vector (ndarray) and
+return a real number (floating point value)</p>
+</div></blockquote>
+<p><strong>df</strong> : function</p>
+<blockquote>
+<div><p>A function that computes the gradient of <cite>f</cite> with respect to the parameters. Must take as input a parameter
+vector (ndarray) and returns another ndarray of the same size.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The parameter vector found after running the proximal update step</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="proxalgs.operators.linsys">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">linsys</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>P</em>, <em>q</em><big>)</big><a class="headerlink" href="#proxalgs.operators.linsys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proximal operator for the linear approximation Ax = b</p>
+<p>Minimizes the function:</p>
+<div class="math">
+\[f(x) = (1/2)||Ax-b||_2^2 = (1/2)x^TA^TAx - (b^TA)x + b^Tb\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
+</div></blockquote>
+<p><strong>P</strong> : ndarray</p>
+<blockquote>
+<div><p>The symmetric matrix A^TA, where we are trying to approximate Ax=b</p>
+</div></blockquote>
+<p><strong>q</strong> : ndarray</p>
+<blockquote>
+<div><p>The vector A^Tb, where we are trying to approximate Ax=b</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The parameter vector found after running the proximal update step</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="proxalgs.operators.nonneg">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">nonneg</tt><big>(</big><em>x0</em>, <em>rho</em><big>)</big><a class="headerlink" href="#proxalgs.operators.nonneg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proximal operator for enforcing non-negativity (indicator function over the set x &gt;= 0)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Unused parameter</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The parameter vector found after running the proximal update step</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="proxalgs.operators.nucnorm">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">nucnorm</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>gamma</em>, <em>mode=None</em><big>)</big><a class="headerlink" href="#proxalgs.operators.nucnorm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proximal operator for the nuclear norm (sum of the singular values of a matrix)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
+</div></blockquote>
+<p><strong>gamma</strong> : float</p>
+<blockquote>
+<div><p>A constant that weights how strongly to enforce the constraint</p>
+</div></blockquote>
+<p><strong>model</strong> : int, optional</p>
+<blockquote>
+<div><p>If None (default), then the input is treated as a numpy array. If an integer, it is
+treated as a tensor object and the nuclear norm is applied to an unfolding of
+the tensor (using the array axis given by mode).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The parameter vector found after running the proximal update step</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="proxalgs.operators.poissreg">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">poissreg</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>X</em>, <em>y</em><big>)</big><a class="headerlink" href="#proxalgs.operators.poissreg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proximal operator for Poisson regression</p>
+<p>Computes the proximal operator of the negative log-likelihood loss assumping a Poisson noise distribution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
+</div></blockquote>
+<p><strong>X</strong> : (N, k) ndarray</p>
+<blockquote>
+<div><p>A design matrix consisting of N examples of k-dimensional features (or input).</p>
+</div></blockquote>
+<p><strong>y</strong> : (N,) ndarray</p>
+<blockquote>
+<div><p>A vector containing the responses (outupt) to the N features given in X.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The parameter vector found after running the proximal update step</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="proxalgs.operators.sfo">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">sfo</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>optimizer</em>, <em>num_steps=5</em><big>)</big><a class="headerlink" href="#proxalgs.operators.sfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proximal operator for an arbitrary function minimized via the Sum-of-Functions optimizer (SFO)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
+</div></blockquote>
+<p><strong>optimizer</strong> : SFO instance</p>
+<blockquote>
+<div><p>Instance of the SFO object in <cite>SFO_admm.py</cite></p>
+</div></blockquote>
+<p><strong>num_steps</strong> : int, optional</p>
+<blockquote>
+<div><p>Number of SFO steps to take</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The parameter vector found after running <cite>num_steps</cite> iterations of the SFO optimizer</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>SFO is a function optimizer for the case where the target function breaks into a sum over minibatches, or a sum
+over contributing functions. It is described in more detail in <a class="reference internal" href="#r1" id="id1">[R1]</a>.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> Jascha Sohl-Dickstein, Ben Poole, and Surya Ganguli. Fast large-scale optimization by unifying stochastic
+gradient and quasi-Newton methods. International Conference on Machine Learning (2014). <a class="reference external" href="http://arxiv.org/abs/1311.2115">arXiv preprint
+arXiv:1311.2115 (2013)</a>.</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="proxalgs.operators.smooth">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">smooth</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>gamma</em>, <em>mode=None</em><big>)</big><a class="headerlink" href="#proxalgs.operators.smooth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proximal operator for a smoothing function enforced via the discrete laplacian operator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
+</div></blockquote>
+<p><strong>gamma</strong> : float</p>
+<blockquote>
+<div><p>A constant that weights how strongly to enforce the constraint</p>
+</div></blockquote>
+<p><strong>model</strong> : int, optional</p>
+<blockquote>
+<div><p>If None (default), then the input is treated as a numpy array. If an integer, it is
+treated as a tensor object and the smoothing is applied to the columns of an unfolding of
+the tensor (using the array axis given by mode).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The parameter vector found after running the proximal update step</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="proxalgs.operators.sparse">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">sparse</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>gamma</em><big>)</big><a class="headerlink" href="#proxalgs.operators.sparse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proximal operator for the l1 norm (induces sparsity)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
+</div></blockquote>
+<p><strong>gamma</strong> : float</p>
+<blockquote>
+<div><p>A constant that weights how strongly to enforce the constraint</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The parameter vector found after running the proximal update step</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="proxalgs.operators.squared_error">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">squared_error</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>x_obs</em><big>)</big><a class="headerlink" href="#proxalgs.operators.squared_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proximal operator for the pairwise difference between two matrices (Frobenius norm)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
+</div></blockquote>
+<p><strong>x_obs</strong> : ndarray</p>
+<blockquote>
+<div><p>The true matrix that we want to approximate. The error between the parameters and this matrix is minimized.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The parameter vector found after running the proximal update step</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="proxalgs.operators.tvd">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">tvd</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>gamma</em><big>)</big><a class="headerlink" href="#proxalgs.operators.tvd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proximal operator for the total variation denoising penalty</p>
+<p>Requires scikit-image be installed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
+</div></blockquote>
+<p><strong>gamma</strong> : float</p>
+<blockquote>
+<div><p>A constant that weights how strongly to enforce the constraint</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<blockquote>
+<div><p>The parameter vector found after running the proximal update step</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ImportError</strong></p>
+<blockquote class="last">
+<div><p>If scikit-image fails to be imported</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="quickstart.html" class="btn btn-neutral" title="Quickstart"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Niru Maheswaranathan.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
