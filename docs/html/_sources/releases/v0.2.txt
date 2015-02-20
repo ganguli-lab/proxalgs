@@ -1,0 +1,15 @@
+v0.2 (Work in Progress)
+=======================
+
+Currently under development.
+
+Goals
+-----
+- Clean up hyperoptimization function
+- Flesh out test suite
+- Add more proximal operators
+
+API Changes
+-----------
+- Removed the function ``add_custom_regularizer``, its functionality is now handled by ``add_regularizer`` which takes
+either a string input (as before) or a function as input (which it handles according to how ``add_custom_regularizer`` used to do).

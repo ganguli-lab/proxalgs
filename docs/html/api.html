@@ -29,6 +29,7 @@
 
   
     <link rel="top" title="proxalgs 0.1.0 documentation" href="index.html"/>
+        <link rel="next" title="Changelog" href="changelog.html"/>
         <link rel="prev" title="Quickstart" href="quickstart.html"/> 
 
   
@@ -76,6 +77,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v0-2-work-in-progress">v0.2 (Work in Progress)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v0-1-february-17-2015">v0.1 (February 17 2015)</a></li>
 </ul>
 </li>
@@ -125,44 +127,43 @@
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>Optimizer class for running proximal algorithms</p>
 <p class="rubric">Notes</p>
-<p>TODO: Add citations
-TODO: Add a demo notebook</p>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#proxalgs.core.Optimizer.add_custom_regularizer" title="proxalgs.core.Optimizer.add_custom_regularizer"><tt class="xref py py-obj docutils literal"><span class="pre">add_custom_regularizer</span></tt></a>(fun,&nbsp;**kwargs)</td>
-<td>Add a custom regularizer / proximal operator</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#proxalgs.core.Optimizer.add_regularizer" title="proxalgs.core.Optimizer.add_regularizer"><tt class="xref py py-obj docutils literal"><span class="pre">add_regularizer</span></tt></a>(proxfun,&nbsp;**kwargs)</td>
-<td>Add a regularizer from the operators module</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#proxalgs.core.Optimizer.clear_regularizers" title="proxalgs.core.Optimizer.clear_regularizers"><tt class="xref py py-obj docutils literal"><span class="pre">clear_regularizers</span></tt></a>()</td>
-<td>Clear any added regularizers (only retains the first objective)</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#proxalgs.core.Optimizer.hyperopt" title="proxalgs.core.Optimizer.hyperopt"><tt class="xref py py-obj docutils literal"><span class="pre">hyperopt</span></tt></a>(regularizers,&nbsp;validation_loss,&nbsp;...)</td>
-<td>Learn hyperparameters</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#proxalgs.core.Optimizer.minimize" title="proxalgs.core.Optimizer.minimize"><tt class="xref py py-obj docutils literal"><span class="pre">minimize</span></tt></a>(theta_init[,&nbsp;num_iter,&nbsp;callback,&nbsp;disp])</td>
-<td>Minimize a list of objectives using a proximal consensus algorithm</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="proxalgs.core.Optimizer.add_custom_regularizer">
-<tt class="descname">add_custom_regularizer</tt><big>(</big><em>fun</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.add_custom_regularizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a custom regularizer / proximal operator</p>
-<p>TODO: more details</p>
-</dd></dl>
-
+<ul class="simple">
+<li>TODO: Add citations</li>
+<li>TODO: Add a demo notebook</li>
+</ul>
+<p class="rubric">Examples</p>
+<p>To initialize an Optimizer object, pass the name of the desired objective function from the operators
+module (and any additional arguments needed for that function). Then, add any desired regularizers along
+with the necessary hyperparameters for those functions. Finally, use the minimize() function to run
+a proximal consensus algorithm for your problem.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">opt</span> <span class="o">=</span> <span class="n">Optimizer</span><span class="p">(</span><span class="s">&#39;squared_error&#39;</span><span class="p">,</span> <span class="n">x_obs</span><span class="o">=</span><span class="n">x_obs</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">opt</span><span class="o">.</span><span class="n">add_regularizer</span><span class="p">(</span><span class="s">&#39;sparse&#39;</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">opt</span><span class="o">.</span><span class="n">add_regularizer</span><span class="p">(</span><span class="s">&#39;nucnorm&#39;</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x_hat</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">x_init</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="proxalgs.core.Optimizer.add_regularizer">
 <tt class="descname">add_regularizer</tt><big>(</big><em>proxfun</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.add_regularizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a regularizer from the operators module</p>
-<p>TODO: more details</p>
+<dd><p>Add a regularizer from the operators module to the list of objectives</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>proxfun</strong> : string or function</p>
+<blockquote>
+<div><p>If a string, then it must be the name of a corresponding function in the <cite>operators</cite> module.
+If a function, then it must apply a proximal update given an initial point x0, momentum parameter
+rho, and optional arguments given in <cite>**kwargs</cite>.</p>
+</div></blockquote>
+<p><strong>**kwargs</strong> : keyword arguments</p>
+<blockquote class="last">
+<div><p>Any optional arguments required for the given function</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -675,6 +676,8 @@ the tensor (using the array axis given by mode).</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="quickstart.html" class="btn btn-neutral" title="Quickstart"><span class="fa fa-arrow-circle-left"></span> Previous</a>

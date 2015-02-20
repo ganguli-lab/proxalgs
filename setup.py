@@ -9,7 +9,7 @@ try:
 except IOError:
     README = ''
 
-install_requires = [i.strip() for i in open("requirements.txt").readlines()]
+install_requires = ['numpy', 'scipy', 'hyperopt', 'sktensor']
 
 tests_require = ['nose']
 

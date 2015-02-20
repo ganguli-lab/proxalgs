@@ -10,6 +10,7 @@ import time
 import numpy as np
 import operators
 import hyperopt
+import types
 
 # exports
 __all__ = ['Optimizer']
@@ -18,24 +19,25 @@ class Optimizer(object):
     """
     Optimizer class for running proximal algorithms
 
-    Usage
-    -----
+    Examples
+    --------
     To initialize an Optimizer object, pass the name of the desired objective function from the operators
     module (and any additional arguments needed for that function). Then, add any desired regularizers along
     with the necessary hyperparameters for those functions. Finally, use the minimize() function to run
     a proximal consensus algorithm for your problem.
 
-    >> opt = Optimizer('squared_error', x_obs=x_obs)
-    >> opt.add_regularizer('sparse', gamma=0.1)
-    >> opt.add_regularizer('nucnorm', gamma=0.5)
-    >> x_hat = opt.minimize(x_init)
+    >>> opt = Optimizer('squared_error', x_obs=x_obs)
+    >>> opt.add_regularizer('sparse', gamma=0.1)
+    >>> opt.add_regularizer('nucnorm', gamma=0.5)
+    >>> x_hat = opt.minimize(x_init)
 
     Notes
     -----
-    TODO: Add citations
-    TODO: Add a demo notebook
+    - TODO: Add citations
+    - TODO: Add a demo notebook
 
     """
+
 
     def __init__(self, objfun, **kwargs):
 
@@ -43,37 +45,53 @@ class Optimizer(object):
         self.add_regularizer(objfun, **kwargs)
         self.converged = False
 
+
     def __str__(self):
         return "foobaz"
+
 
     def __repr__(self):
         return "foobaz"
 
+
     def add_regularizer(self, proxfun, **kwargs):
         """
-        Add a regularizer from the operators module
+        Add a regularizer from the operators module to the list of objectives
 
-        TODO: more details
+        Parameters
+        ----------
+        proxfun : string or function
+            If a string, then it must be the name of a corresponding function in the `operators` module.
+            If a function, then it must apply a proximal update given an initial point x0, momentum parameter
+            rho, and optional arguments given in `**kwargs`.
 
-        """
-
-        def wrapper(theta, rho):
-            return getattr(operators, proxfun)(theta.copy(), float(rho), **kwargs)
-
-        self.objectives.append(wrapper)
-
-    def add_custom_regularizer(self, fun, **kwargs):
-        """
-        Add a custom regularizer / proximal operator
-
-        TODO: more details
+        \\*\\*kwargs : keyword arguments
+            Any optional arguments required for the given function
 
         """
 
-        def wrapper(theta, rho):
-            return fun(theta.copy(), float(rho), **kwargs)
+        # if proxfun is a string, grab the corresponding function from operators.py
+        if isinstance(proxfun, str):
+            try:
+                def wrapper(theta, rho):
+                    return getattr(operators, proxfun)(theta.copy(), float(rho), **kwargs)
 
-        self.objectives.append(wrapper)
+                self.objectives.append(wrapper)
+
+            except AttributeError as e:
+                print(str(e) + '\n' + 'Could not find the function ' + proxfun + ' in the operators module!')
+
+        # if proxfun is a function, add it as its own proximal operator
+        elif isinstance(proxfun, types.FunctionType):
+            def wrapper(theta, rho):
+                return proxfun(theta.copy(), float(rho), **kwargs)
+
+            self.objectives.append(wrapper)
+
+        # type of proxfun must be a string or a function
+        else:
+            raise TypeError('The argument "proxfun" must be a string or a function. See the documentation for more details.')
+
 
     def clear_regularizers(self):
         """
@@ -81,6 +99,7 @@ class Optimizer(object):
 
         """
         self.objectives = [self.objectives[0]]
+
 
     def minimize(self, theta_init, num_iter=20, callback=None, disp=0, **kwargs):
         """
@@ -227,6 +246,7 @@ class Optimizer(object):
                         'runtimes': runtimes, 'primals': primals, 'numiter': k+1}
         self.theta = mu[-1].reshape(orig_shape)
         return self.theta
+
 
     def hyperopt(self, regularizers, validation_loss, theta_init, num_runs, num_iter=50):
         """
