@@ -47,11 +47,7 @@ class Optimizer(object):
 
 
     def __str__(self):
-        return "foobaz"
-
-
-    def __repr__(self):
-        return "foobaz"
+        return "Optimizer object with %i objectives." % len(self.objectives)
 
 
     def add_regularizer(self, proxfun, **kwargs):
