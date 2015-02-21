@@ -19,6 +19,7 @@ import scipy.optimize as opt
 from scipy.sparse import spdiags
 from scipy.sparse.linalg import spsolve
 from sktensor import dtensor
+from skimage.restoration import denoise_tv_bregman
 
 
 def sfo(x0, rho, optimizer, num_steps=5):
@@ -67,7 +68,7 @@ def sfo(x0, rho, optimizer, num_steps=5):
     return optimizer.optimize(num_steps=num_steps)
 
 
-def poissreg(x0, rho, X, y):
+def poissreg(x0, rho, x, y):
     """
     Proximal operator for Poisson regression
 
@@ -81,11 +82,11 @@ def poissreg(x0, rho, X, y):
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
-    X : (N, k) ndarray
-        A design matrix consisting of N examples of k-dimensional features (or input).
+    x : (n, k) ndarray
+        A design matrix consisting of n examples of k-dimensional features (or input).
 
-    y : (N,) ndarray
-        A vector containing the responses (outupt) to the N features given in X.
+    y : (n,) ndarray
+        A vector containing the responses (outupt) to the n features given in x.
 
     Returns
     -------
@@ -96,9 +97,9 @@ def poissreg(x0, rho, X, y):
     """
 
     # objective and gradient
-    N = float(X.shape[0])
-    f = lambda w: np.mean(np.exp(X.dot(w)) - y * X.dot(w))
-    df = lambda w: (X.T.dot(np.exp(X.dot(w))) - X.T.dot(y)) / N
+    n = float(x.shape[0])
+    f = lambda w: np.mean(np.exp(x.dot(w)) - y * x.dot(w))
+    df = lambda w: (x.T.dot(np.exp(x.dot(w))) - x.T.dot(y)) / n
 
     # minimize via BFGS
     return bfgs(x0, rho, f, df)
@@ -176,12 +177,12 @@ def smooth(x0, rho, gamma, mode=None):
 
     # Apply Laplacian smoothing
     n = x_temp.shape[0]
-    A = spdiags([(2+rho/gamma) * np.ones(n), -1 * np.ones(n), -1 * np.ones(n)], [0, -1, 1], n, n, format='csc')
-    x_out = spsolve(gamma * A, rho * x_temp)
+    lap_op = spdiags([(2 + rho / gamma) * np.ones(n), -1 * np.ones(n), -1 * np.ones(n)], [0, -1, 1], n, n, format='csc')
+    x_out = spsolve(gamma * lap_op, rho * x_temp)
 
     if mode is not None:
         tmp = x_temp.copy()
-        tmp[:,:] = x_out[:,:]
+        tmp[:, :] = x_out[:, :]
         x_out = tmp.fold()
 
     return x_out
@@ -224,7 +225,7 @@ def nucnorm(x0, rho, gamma, mode=None):
     u, s, v = np.linalg.svd(x_temp, full_matrices=False)
 
     # soft threshold the singular values
-    sthr = np.maximum(s-(gamma/float(rho)),0)
+    sthr = np.maximum(s - (gamma / float(rho)), 0)
 
     # reconstruct
     x_out = (u.dot(np.diag(sthr)).dot(v))
@@ -257,7 +258,7 @@ def squared_error(x0, rho, x_obs):
         The parameter vector found after running the proximal update step
 
     """
-    return (x0 + x_obs / rho) / (1 + 1/rho)
+    return (x0 + x_obs / rho) / (1 + 1 / rho)
 
 
 def tvd(x0, rho, gamma):
@@ -289,11 +290,7 @@ def tvd(x0, rho, gamma):
 
     """
 
-    try:
-        from skimage.restoration import denoise_tv_bregman
-        return denoise_tv_bregman(x0, rho / gamma)
-    except ImportError:
-        print("Must have scikit-image installed.")
+    return denoise_tv_bregman(x0, rho / gamma)
 
 
 def sparse(x0, rho, gamma):
@@ -318,8 +315,8 @@ def sparse(x0, rho, gamma):
 
     """
 
-    return (x0 * gamma - 1./rho) * (x0 * gamma >= 1./rho) \
-           + (x0 * gamma + 1./rho) * (x0 * gamma <= -1./rho)
+    return (x0 * gamma - 1. / rho) * (x0 * gamma >= 1. / rho) \
+           + (x0 * gamma + 1. / rho) * (x0 * gamma <= -1. / rho)
 
 
 def nonneg(x0, rho):
@@ -340,6 +337,7 @@ def nonneg(x0, rho):
         The parameter vector found after running the proximal update step
 
     """
+
     return np.maximum(x0, 0)
 
 

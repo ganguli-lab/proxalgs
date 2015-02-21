@@ -15,6 +15,7 @@ import types
 # exports
 __all__ = ['Optimizer']
 
+
 class Optimizer(object):
     """
     Optimizer class for running proximal algorithms
@@ -38,17 +39,17 @@ class Optimizer(object):
 
     """
 
-
     def __init__(self, objfun, **kwargs):
 
         self.objectives = list()
         self.add_regularizer(objfun, **kwargs)
         self.converged = False
-
+        self.results = None
+        self.theta = None
+        self.hyperopt_trials = None
 
     def __str__(self):
         return "Optimizer object with %i objectives." % len(self.objectives)
-
 
     def add_regularizer(self, proxfun, **kwargs):
         """
@@ -86,8 +87,8 @@ class Optimizer(object):
 
         # type of proxfun must be a string or a function
         else:
-            raise TypeError('The argument "proxfun" must be a string or a function. See the documentation for more details.')
-
+            raise TypeError(
+                'The argument "proxfun" must be a string or a function. See the documentation for more details.')
 
     def clear_regularizers(self):
         """
@@ -96,8 +97,7 @@ class Optimizer(object):
         """
         self.objectives = [self.objectives[0]]
 
-
-    def minimize(self, theta_init, num_iter=20, callback=None, disp=0, **kwargs):
+    def minimize(self, theta_init, max_iter=50, callback=None, disp=0, **kwargs):
         """
         Minimize a list of objectives using a proximal consensus algorithm
 
@@ -109,8 +109,8 @@ class Optimizer(object):
         theta_init : ndarray
             Initial parameter vector (numpy array)
 
-        num_iter : int, optional
-            number of iterations to run (default: 20)
+        max_iter : int, optional
+            Maximum number of iterations to run (default: 50)
 
         callback : function, optional
             a function that gets called on each iteration with the following arguments: the current parameter
@@ -164,7 +164,7 @@ class Optimizer(object):
         resid['dual'] = list()
 
         # penalty parameter scheduling (see sect. 3.4.1 of the Boyd and Parikh ADMM paper)
-        rho = np.zeros(num_iter + 1)
+        rho = np.zeros(max_iter + 1)
         rho[0] = opt['rho_init']
 
         # store cumulative runtimes of each iteration
@@ -179,11 +179,10 @@ class Optimizer(object):
 
         # run ADMM iterations
         self.converged = False
-        for k in range(num_iter):
+        for k in range(max_iter):
 
             # update each variable copy by taking a proximal step via each objective (TODO: in parallel?)
             for idx, x in enumerate(primals):
-
                 # unpack objective
                 obj = self.objectives[idx]
 
@@ -191,6 +190,7 @@ class Optimizer(object):
                 primals[idx] = obj((-duals[idx] + mu[-1]).reshape(orig_shape), rho[k]).ravel()
 
             # average primal copies
+            # noinspection PyTypeChecker
             mu.append(np.mean(primals, axis=0).copy())
 
             # update the dual variables (after primal update has finished!)
@@ -216,7 +216,7 @@ class Optimizer(object):
 
             # display
             if disp == 1:
-                print('Iteration %i of %i' % (k + 1, num_iter))
+                print('Iteration %i of %i' % (k + 1, max_iter))
 
             elif disp > 1:
                 print('| %10.4f \t\t| %16.8f \t| %16.8f \t|' % (runtimes[-1], rk, sk))
@@ -236,13 +236,13 @@ class Optimizer(object):
             print('-------------------------------------------------------------------------\n')
 
         if self.converged and disp > 0:
-            print('Converged after %i iterations!' % (k+1))
+            # noinspection PyUnboundLocalVariable
+            print('Converged after %i iterations!' % (k + 1))
 
         self.results = {'residuals': resid, 'rho': rho, 'duals': duals,
-                        'runtimes': runtimes, 'primals': primals, 'numiter': k+1}
+                        'runtimes': runtimes, 'primals': primals, 'numiter': k + 1}
         self.theta = mu[-1].reshape(orig_shape)
         return self.theta
-
 
     def hyperopt(self, regularizers, validation_loss, theta_init, num_runs, num_iter=50):
         """
@@ -303,12 +303,7 @@ class Optimizer(object):
             regs = [(reg[0][1], reg[1]) for reg in zip(regularizers, gammas)]
 
             # add regularizers with the given hyperparameters (given names of functions in operators.py)
-            map(lambda x: self.add_regularizer(x[0], gamma=x[1]),
-                filter(lambda v: isinstance(v[0], str), regs))
-
-            # add regularizers with the given hyperparameters (given custom functions)
-            map(lambda x: self.add_custom_regularizer(x[0], gamma=x[1]),
-                filter(lambda v: not isinstance(v[0], str), regs))
+            map(lambda x: self.add_regularizer(x[0], gamma=x[1]), regs)
 
             # run the minimizer
             x_hat = self.minimize(theta_init, num_iter=num_iter, disp=2)
@@ -332,9 +327,9 @@ class Optimizer(object):
 
         # search over different hyperparameters
         gamma_opt = hyperopt.fmin(metaobjective,
-                   space=searchspace,
-                   algo=hyperopt.tpe.suggest,
-                   max_evals=num_runs,
-                   trials=self.hyperopt_trials)
+                                  space=searchspace,
+                                  algo=hyperopt.tpe.suggest,
+                                  max_evals=num_runs,
+                                  trials=self.hyperopt_trials)
 
         return gamma_opt
