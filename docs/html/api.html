@@ -221,7 +221,7 @@ corresponding function in the operators module, and each value is the learned hy
 
 <dl class="method">
 <dt id="proxalgs.core.Optimizer.minimize">
-<tt class="descname">minimize</tt><big>(</big><em>theta_init</em>, <em>num_iter=20</em>, <em>callback=None</em>, <em>disp=0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.minimize" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">minimize</tt><big>(</big><em>theta_init</em>, <em>max_iter=50</em>, <em>callback=None</em>, <em>disp=0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.minimize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Minimize a list of objectives using a proximal consensus algorithm</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -235,9 +235,9 @@ corresponding function in the operators module, and each value is the learned hy
 <blockquote>
 <div><p>Initial parameter vector (numpy array)</p>
 </div></blockquote>
-<p><strong>num_iter</strong> : int, optional</p>
+<p><strong>max_iter</strong> : int, optional</p>
 <blockquote>
-<div><p>number of iterations to run (default: 20)</p>
+<div><p>Maximum number of iterations to run (default: 50)</p>
 </div></blockquote>
 <p><strong>callback</strong> : function, optional</p>
 <blockquote>
@@ -443,7 +443,7 @@ the tensor (using the array axis given by mode).</p>
 
 <dl class="function">
 <dt id="proxalgs.operators.poissreg">
-<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">poissreg</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>X</em>, <em>y</em><big>)</big><a class="headerlink" href="#proxalgs.operators.poissreg" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">poissreg</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#proxalgs.operators.poissreg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Proximal operator for Poisson regression</p>
 <p>Computes the proximal operator of the negative log-likelihood loss assumping a Poisson noise distribution.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -458,13 +458,13 @@ the tensor (using the array axis given by mode).</p>
 <blockquote>
 <div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
 </div></blockquote>
-<p><strong>X</strong> : (N, k) ndarray</p>
+<p><strong>x</strong> : (n, k) ndarray</p>
 <blockquote>
-<div><p>A design matrix consisting of N examples of k-dimensional features (or input).</p>
+<div><p>A design matrix consisting of n examples of k-dimensional features (or input).</p>
 </div></blockquote>
-<p><strong>y</strong> : (N,) ndarray</p>
+<p><strong>y</strong> : (n,) ndarray</p>
 <blockquote>
-<div><p>A vector containing the responses (outupt) to the N features given in X.</p>
+<div><p>A vector containing the responses (outupt) to the n features given in x.</p>
 </div></blockquote>
 </td>
 </tr>

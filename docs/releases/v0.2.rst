@@ -11,5 +11,7 @@ Goals
 
 API Changes
 -----------
+- Renamed the ``num_iter`` parameter in ``Optimizer.minimize()`` to ``max_iter`` (more appropriate given that the algorithm
+can stop early if tolerance is reached).
 - Removed the function ``add_custom_regularizer``, its functionality is now handled by ``add_regularizer`` which takes
 either a string input (as before) or a function as input (which it handles according to how ``add_custom_regularizer`` used to do).
