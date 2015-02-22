@@ -10,7 +10,6 @@ import time
 import numpy as np
 import operators
 import hyperopt
-import types
 
 # exports
 __all__ = ['Optimizer']
@@ -79,7 +78,7 @@ class Optimizer(object):
                 print(str(e) + '\n' + 'Could not find the function ' + proxfun + ' in the operators module!')
 
         # if proxfun is a function, add it as its own proximal operator
-        elif isinstance(proxfun, types.FunctionType):
+        elif hasattr(proxfun, '__call__'):
             def wrapper(theta, rho):
                 return proxfun(theta.copy(), float(rho), **kwargs)
 
@@ -87,8 +86,7 @@ class Optimizer(object):
 
         # type of proxfun must be a string or a function
         else:
-            raise TypeError(
-                'The argument "proxfun" must be a string or a function. See the documentation for more details.')
+            raise TypeError('The argument "proxfun" must be a string or a function!')
 
     def clear_regularizers(self):
         """
