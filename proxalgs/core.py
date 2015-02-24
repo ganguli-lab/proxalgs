@@ -221,7 +221,12 @@ class Optimizer(object):
 
             # call the callback function
             if callback is not None:
-                results = {'residuals': resid, 'rho': rho, 'duals': duals, 'runtimes': runtimes, 'primals': primals}
+
+                # collect data in a results dictionary
+                results = {'residuals': resid, 'rho': rho, 'duals': duals, 'runtimes': runtimes, 'primals': primals,
+                           'theta_previous': mu[-2].reshape(orig_shape)}
+
+                # call the callback with the current parameters and results dictionary
                 callback(mu[-1].reshape(orig_shape), results)
 
             # check for convergence
