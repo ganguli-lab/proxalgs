@@ -39,7 +39,7 @@ def test_lowrank_matrix_approx():
     # proximal algorithm for low rank matrix approximation
     opt = Optimizer('squared_error', x_obs=x_obs)
     opt.add_regularizer('nucnorm', gamma=0.2)
-    x_hat = opt.minimize(x_obs, num_iter=100)
+    x_hat = opt.minimize(x_obs, max_iter=100)
 
     test_err = np.linalg.norm(x_hat - x_true, 'fro')
     naive_err = np.linalg.norm(x_obs - x_true, 'fro')
