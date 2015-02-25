@@ -2,3 +2,4 @@ numpy
 scipy
 hyperopt
 scikit-tensor
+tableprint

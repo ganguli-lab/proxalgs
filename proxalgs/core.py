@@ -10,6 +10,7 @@ import time
 import numpy as np
 import operators
 import hyperopt
+import tableprint
 
 # exports
 __all__ = ['Optimizer']
@@ -170,10 +171,12 @@ class Optimizer(object):
         tstart = time.time()
 
         # udpate each iteration
+        col_width=20
+        hr = tableprint.hr(3, column_width=col_width)
         if disp > 1:
-            print('-------------------------------------------------------------------------')
-            print('|  ELAPSED TIME (s) \t|  PRIMAL RESIDUAL \t|  DUAL RESIDUAL \t|')
-            print('-------------------------------------------------------------------------')
+            print('\n' + hr)
+            print(tableprint.header(['Elapsed time (s)', 'Primal residual', 'Dual residual'], column_width=col_width))
+            print(hr)
 
         # run ADMM iterations
         self.converged = False
@@ -217,7 +220,7 @@ class Optimizer(object):
                 print('Iteration %i of %i' % (k + 1, max_iter))
 
             elif disp > 1:
-                print('| %10.4f \t\t| %16.8f \t| %16.8f \t|' % (runtimes[-1], rk, sk))
+                print(tableprint.row([runtimes[-1], rk, sk], column_width=col_width, precision='6f'))
 
             # call the callback function
             if callback is not None:
@@ -236,7 +239,7 @@ class Optimizer(object):
 
         # clean up
         if disp > 1:
-            print('-------------------------------------------------------------------------\n')
+            print(hr + '\n')
 
         if self.converged and disp > 0:
             # noinspection PyUnboundLocalVariable
