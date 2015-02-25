@@ -102,9 +102,6 @@ class Optimizer(object):
 
         Parameters
         ----------
-        objectives : list
-            List of objectives, each objective is a function that computes a proximal update.
-
         theta_init : ndarray
             Initial parameter vector (numpy array)
 
@@ -116,7 +113,7 @@ class Optimizer(object):
             value (ndarray), and a dictionary that contains a information about the status of the algorithm
 
         disp : integer, optional
-            determines how much information to display when running. 0 (default): nothing, 2: lots of information
+            determines how much information to display when running. Ranges from 0 (nothing) to 3 (lots of information)
 
         Returns
         -------
@@ -171,11 +168,19 @@ class Optimizer(object):
         tstart = time.time()
 
         # udpate each iteration
-        col_width=20
-        hr = tableprint.hr(3, column_width=col_width)
+        col_width=16
+        hr = ''
         if disp > 1:
+
+            headers = ['Elapsed time (s)', 'Primal residual', 'Dual residual']
+
+            if disp > 2:
+                headers += [('Primal Var. #%i' % i) for i in range(num_obj)]
+                headers += ['Rho (momentum)']
+
+            hr = tableprint.hr(len(headers), column_width=col_width)
             print('\n' + hr)
-            print(tableprint.header(['Elapsed time (s)', 'Primal residual', 'Dual residual'], column_width=col_width))
+            print(tableprint.header(headers, column_width=col_width))
             print(hr)
 
         # run ADMM iterations
@@ -220,7 +225,16 @@ class Optimizer(object):
                 print('Iteration %i of %i' % (k + 1, max_iter))
 
             elif disp > 1:
-                print(tableprint.row([runtimes[-1], rk, sk], column_width=col_width, precision='6f'))
+
+                # elapsed runtime, primal and dual residuals
+                data = [runtimes[-1], rk, sk]
+
+                # residual for each variable copy, momentum parameter
+                if disp > 2:
+                    data += [np.linalg.norm(p-mu[-1]) for p in primals]
+                    data += [rho[k]]
+
+                print(tableprint.row(data, column_width=col_width, precision='8g'))
 
             # call the callback function
             if callback is not None:

@@ -11,6 +11,7 @@ Goals
 
 API Changes
 -----------
+- Updated display options to use the ``tableprint`` module, added more display options / levels of detail
 - Renamed the ``num_iter`` parameter in ``Optimizer.minimize()`` to ``max_iter`` (more appropriate given that the algorithm
 can stop early if tolerance is reached).
 - Removed the function ``add_custom_regularizer``, its functionality is now handled by ``add_regularizer`` which takes
