@@ -8,6 +8,7 @@ A proximal consensus optimization algorithm
 # imports
 import time
 import numpy as np
+import pandas as pd
 import operators
 import hyperopt
 import tableprint
@@ -44,7 +45,7 @@ class Optimizer(object):
         self.objectives = list()
         self.add_regularizer(objfun, **kwargs)
         self.converged = False
-        self.results = None
+        self.metadata = pd.DataFrame()
         self.theta = None
         self.hyperopt_trials = None
 
@@ -96,7 +97,7 @@ class Optimizer(object):
         """
         self.objectives = [self.objectives[0]]
 
-    def minimize(self, theta_init, max_iter=50, callback=None, disp=0, **kwargs):
+    def minimize(self, theta_init, max_iter=50, callback=None, disp=0, mu=10, tau_inc=2, tau_dec=2, tol=1e-3):
         """
         Minimize a list of objectives using a proximal consensus algorithm
 
@@ -125,7 +126,7 @@ class Optimizer(object):
 
         Other Parameters
         ----------------
-        rho_init : int, optional
+        mu : int, optional
             initial value of the momentum term, larger values take smaller steps (default: 10)
 
         tau_inc : int, optional
@@ -140,10 +141,6 @@ class Optimizer(object):
 
         """
 
-        # default options / parameter values
-        opt = {'rho_init': 10, 'tau_inc': 2, 'tau_dec': 2, 'tol': 1e-3}
-        opt.update(kwargs)
-
         # get list of objectives for this parameter
         num_obj = len(self.objectives)
         assert num_obj >= 1, "There must be at least one objective!"
@@ -152,102 +149,81 @@ class Optimizer(object):
         orig_shape = theta_init.shape
         primals = [theta_init.flatten() for _ in range(num_obj)]
         duals = [np.zeros(theta_init.size) for _ in range(num_obj)]
-        mu = [np.mean(primals, axis=0).ravel()]
-
-        # store primal and dual residuals
-        resid = dict()
-        resid['primal'] = list()
-        resid['dual'] = list()
+        theta_avg = np.mean(primals, axis=0).ravel()
 
         # penalty parameter scheduling (see sect. 3.4.1 of the Boyd and Parikh ADMM paper)
-        rho = np.zeros(max_iter + 1)
-        rho[0] = opt['rho_init']
+        rho = mu
 
-        # store cumulative runtimes of each iteration
-        runtimes = list()
+        # udpate display
+        self.update_display(disp)
+
+        # store cumulative runtimes of each iteration, starting now
         tstart = time.time()
-
-        # udpate each iteration
-        col_width = 16
-        hr = ''
-        if disp > 1:
-
-            headers = ['Elapsed time (s)', 'Primal residual', 'Dual residual']
-
-            if disp > 2:
-                headers += [('Primal Var. #%i' % i) for i in range(num_obj)]
-                headers += ['Rho (momentum)']
-
-            hr = tableprint.hr(len(headers), column_width=col_width)
-            print('\n' + hr)
-            print(tableprint.header(headers, column_width=col_width))
-            print(hr)
 
         # run ADMM iterations
         self.converged = False
-        for k in range(max_iter):
+        cur_iter = 0
+        for cur_iter in range(max_iter):
 
-            # update each variable copy by taking a proximal step via each objective (TODO: in parallel?)
-            for idx, x in enumerate(primals):
-                # unpack objective
-                obj = self.objectives[idx]
+            # store the parameters from the previous iteration
+            theta_prev = theta_avg
 
-                # evaluate objective (proximity operator) to update primals
-                primals[idx] = obj((-duals[idx] + mu[-1]).reshape(orig_shape), rho[k]).ravel()
+            # update each primal variable copy by taking a proximal step via each objective
+            primal_runtimes = list()
+            for varidx, dual in enumerate(duals):
+                primal_start = time.time()
+                primals[varidx] = self.objectives[varidx]((theta_prev - dual).reshape(orig_shape), rho).ravel()
+                primal_runtimes.append(time.time() - primal_start)
 
             # average primal copies
-            # noinspection PyTypeChecker
-            mu.append(np.mean(primals, axis=0).copy())
+            theta_avg = np.mean(primals, axis=0)
 
-            # update the dual variables (after primal update has finished!)
-            for idx, x in enumerate(primals):
-                duals[idx] += x - mu[-1]
+            # update the dual variables (after primal update has finished)
+            for varidx, primal in enumerate(primals):
+                duals[varidx] += primal - theta_avg
 
             # compute primal and dual residuals
-            rk = float(np.sum([np.linalg.norm(x - mu[-1]) for x in primals]))
-            sk = num_obj * rho[k] ** 2 * np.linalg.norm(mu[-1] - mu[-2])
-            resid['primal'].append(rk)
-            resid['dual'].append(sk)
-
-            # store runtime
-            runtimes.append(time.time() - tstart)
+            primal_resid = float(np.sum([np.linalg.norm(primal - theta_avg) for primal in primals]))
+            dual_resid = num_obj * rho ** 2 * np.linalg.norm(theta_avg - theta_prev)
 
             # update penalty parameter according to primal and dual residuals
-            if rk > opt['rho_init'] * sk:
-                rho[k + 1] = opt['tau_inc'] * rho[k]
-            elif sk > opt['rho_init'] * rk:
-                rho[k + 1] = rho[k] / opt['tau_dec']
-            else:
-                rho[k + 1] = rho[k]
+            if primal_resid > mu * dual_resid:
+                rho *= tau_inc
+            elif dual_resid > mu * primal_resid:
+                rho /= tau_dec
 
             # display
             if disp == 1:
-                print('Iteration %i of %i' % (k + 1, max_iter))
+                print('Iteration %i of %i' % (cur_iter + 1, max_iter))
 
             elif disp > 1:
 
                 # elapsed runtime, primal and dual residuals
-                data = [runtimes[-1], rk, sk]
+                data = [runtimes[-1], primal_resid, dual_resid]
 
                 # residual for each variable copy, momentum parameter
                 if disp > 2:
-                    data += [np.linalg.norm(p - mu[-1]) for p in primals]
-                    data += [rho[k]]
+                    data += [np.linalg.norm(p - theta_avg) for p in primals]
+                    data += primal_runtimes
+                    data += [rho[cur_iter]]
 
                 print(tableprint.row(data, column_width=col_width, precision='8g'))
 
-            # call the callback function
+            # update metadata for this iteration
+            self.metadata.append({
+                'Primal residual': primal_resid,
+                'Dual residual': dual_resid,
+                'Elapsed time': time.time() - tstart,
+                'Momentum term (rho)': rho,
+                'Primal runtimes': primal_runtimes
+            }, ignore_index=True)
+
+            # call the callback function with the current parameters and metadata from the last iteration
             if callback is not None:
-
-                # collect data in a results dictionary
-                results = {'residuals': resid, 'rho': rho, 'duals': duals, 'runtimes': runtimes, 'primals': primals,
-                           'theta_previous': mu[-2].reshape(orig_shape)}
-
-                # call the callback with the current parameters and results dictionary
-                callback(mu[-1].reshape(orig_shape), results)
+                callback(theta_avg.reshape(orig_shape), self.metadata.tail(1).irow(0).to_dict())
 
             # check for convergence
-            if (rk <= opt['tol']) & (sk <= opt['tol']):
+            if (primal_resid <= tol) & (dual_resid <= tol):
                 self.converged = True
                 break
 
@@ -256,12 +232,9 @@ class Optimizer(object):
             print(hr + '\n')
 
         if self.converged and disp > 0:
-            # noinspection PyUnboundLocalVariable
-            print('Converged after %i iterations!' % (k + 1))
+            print('Converged after %i iterations!' % (cur_iter + 1))
 
-        self.results = {'residuals': resid, 'rho': rho, 'duals': duals,
-                        'runtimes': runtimes, 'primals': primals, 'numiter': k + 1}
-        self.theta = mu[-1].reshape(orig_shape)
+        self.theta = theta_avg.reshape(orig_shape)
         return self.theta
 
     def hyperopt(self, regularizers, validation_loss, theta_init, num_runs, num_iter=50):
