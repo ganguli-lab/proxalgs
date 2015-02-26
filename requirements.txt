@@ -3,3 +3,4 @@ scipy
 hyperopt
 scikit-tensor
 tableprint
+pandas
