@@ -168,7 +168,7 @@ class Optimizer(object):
         tstart = time.time()
 
         # udpate each iteration
-        col_width=16
+        col_width = 16
         hr = ''
         if disp > 1:
 
@@ -231,7 +231,7 @@ class Optimizer(object):
 
                 # residual for each variable copy, momentum parameter
                 if disp > 2:
-                    data += [np.linalg.norm(p-mu[-1]) for p in primals]
+                    data += [np.linalg.norm(p - mu[-1]) for p in primals]
                     data += [rho[k]]
 
                 print(tableprint.row(data, column_width=col_width, precision='8g'))
