@@ -273,7 +273,7 @@ class Optimizer(object):
 
             # print convergence statement
             if iteration == -1 and self.converged:
-                print('Converged after %i iterations!' % cur_iter)
+                print('Converged after %i iterations!' % len(self.metadata))
 
     def hyperopt(self, regularizers, validation_loss, theta_init, num_runs, num_iter=50):
         """
