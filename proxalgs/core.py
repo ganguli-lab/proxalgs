@@ -154,9 +154,6 @@ class Optimizer(object):
         # penalty parameter scheduling (see sect. 3.4.1 of the Boyd and Parikh ADMM paper)
         rho = mu
 
-        # udpate display
-        self.update_display(disp)
-
         # store cumulative runtimes of each iteration, starting now
         tstart = time.time()
 
@@ -192,28 +189,11 @@ class Optimizer(object):
             elif dual_resid > mu * primal_resid:
                 rho /= tau_dec
 
-            # display
-            if disp == 1:
-                print('Iteration %i of %i' % (cur_iter + 1, max_iter))
-
-            elif disp > 1:
-
-                # elapsed runtime, primal and dual residuals
-                data = [runtimes[-1], primal_resid, dual_resid]
-
-                # residual for each variable copy, momentum parameter
-                if disp > 2:
-                    data += [np.linalg.norm(p - theta_avg) for p in primals]
-                    data += primal_runtimes
-                    data += [rho[cur_iter]]
-
-                print(tableprint.row(data, column_width=col_width, precision='8g'))
-
             # update metadata for this iteration
-            self.metadata.append({
+            self.metadata = self.metadata.append({
                 'Primal residual': primal_resid,
                 'Dual residual': dual_resid,
-                'Elapsed time': time.time() - tstart,
+                'Elapsed time (s)': time.time() - tstart,
                 'Momentum term (rho)': rho,
                 'Primal runtimes': primal_runtimes
             }, ignore_index=True)
@@ -222,24 +202,84 @@ class Optimizer(object):
             if callback is not None:
                 callback(theta_avg.reshape(orig_shape), self.metadata.tail(1).irow(0).to_dict())
 
+            # update the display
+            self.update_display(cur_iter + 1, disp)
+
             # check for convergence
             if (primal_resid <= tol) & (dual_resid <= tol):
                 self.converged = True
                 break
 
-        # clean up
-        if disp > 1:
-            print(hr + '\n')
+        # clean up display
+        self.update_display(-1, disp)
 
-        if self.converged and disp > 0:
-            print('Converged after %i iterations!' % (cur_iter + 1))
-
+        # store and return final parameters
         self.theta = theta_avg.reshape(orig_shape)
+
         return self.theta
+
+    def update_display(self, iteration, disp_level, col_width=20):
+        """
+        Prints information about the optimization procedure to standard output
+
+        Parameters
+        ----------
+        iteration : int
+            The current iteration. Must either a positive integer or -1, which indicates the end of the algorithm
+
+        disp_level : int
+            An integer which controls how much information to display, ranging from 0 (nothing) to 3 (lots of stuff)
+
+        col_width : int
+            The width of each column in the data table, used if disp > 1
+
+        """
+
+        # exit and print nothing if disp_level is zero
+        if disp_level == 0:
+            return
+
+        else:
+
+            # simple update, no table
+            if disp_level == 1 and iteration >= 0:
+                print('[Iteration %i]' % iteration)
+
+            # fancy table updates
+            if disp_level > 1:
+
+                # get the metadata from this iteration
+                data = self.metadata.tail(1).irow(0).to_dict()
+
+                # choose what keys to use
+                keys = ['Elapsed time (s)', 'Primal residual', 'Dual residual']
+                if disp_level > 2:
+                    keys += ['Momentum term (rho)', 'Primal runtimes']
+
+                # initial update. print out table headers
+                if iteration == 1:
+                    hr = tableprint.hr(len(keys), column_width=col_width)
+                    print('\n' + hr)
+                    print(tableprint.header(keys, column_width=col_width))
+                    print(hr)
+
+                # print data
+                tabledata = map(lambda d: float(d) if d.size == 1 else ', '.join(map(lambda i: '{:.2f}'.format(i), d)),
+                                [np.array(data[key]) for key in keys])
+                print(tableprint.row(tabledata, column_width=col_width, precision='8g'))
+
+                if iteration == -1:
+                    print(tableprint.hr(len(keys), column_width=col_width) + '\n')
+
+            # print convergence statement
+            if iteration == -1 and self.converged:
+                print('Converged after %i iterations!' % cur_iter)
 
     def hyperopt(self, regularizers, validation_loss, theta_init, num_runs, num_iter=50):
         """
         Learn hyperparameters
+
+        .. warning:: Work in progress
 
         Parameters
         ----------
@@ -299,7 +339,7 @@ class Optimizer(object):
             map(lambda x: self.add_regularizer(x[0], gamma=x[1]), regs)
 
             # run the minimizer
-            x_hat = self.minimize(theta_init, num_iter=num_iter, disp=2)
+            x_hat = self.minimize(theta_init, max_iter=num_iter, disp=2)
 
             # test on the validation set
             loss = validation_loss(x_hat)

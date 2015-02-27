@@ -1,5 +1,5 @@
 import os
-from distutils.core import setup
+from setuptools import setup
 
 version = '0.2.1'
 
@@ -22,7 +22,7 @@ setup(name='proxalgs',
           'Operating System :: MacOS :: MacOS X',
           'Topic :: Scientific/Engineering :: Information Analysis'],
       packages=['proxalgs'],
-      requires=install_requires,
+      requires=['numpy', 'scipy', 'pandas', 'hyperopt', 'tableprint', 'sktensor'],
       extras_require={
           'dev': ['sphinx', 'sphinx-rtd-theme'],
           'test': ['nose']
