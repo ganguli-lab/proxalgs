@@ -231,7 +231,7 @@ class Optimizer(object):
             An integer which controls how much information to display, ranging from 0 (nothing) to 3 (lots of stuff)
 
         col_width : int
-            The width of each column in the data table, used if disp > 1
+            The width of each column in the data table, used if disp_level > 1
 
         """
 

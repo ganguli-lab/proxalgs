@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; proxalgs 0.1.0 documentation</title>
+  <title>API Reference &mdash; proxalgs 0.2.0 documentation</title>
   
 
   
@@ -28,8 +28,7 @@
   
 
   
-    <link rel="top" title="proxalgs 0.1.0 documentation" href="index.html"/>
-        <link rel="next" title="Changelog" href="changelog.html"/>
+    <link rel="top" title="proxalgs 0.2.0 documentation" href="index.html"/>
         <link rel="prev" title="Quickstart" href="quickstart.html"/> 
 
   
@@ -77,8 +76,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v0-2-work-in-progress">v0.2 (Work in Progress)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v0-1-february-17-2015">v0.1 (February 17 2015)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#roadmap-looking-ahead-to-v1-0">Roadmap (looking ahead to v1.0)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v0-2-february-26-2015">v0.2 (February 26, 2015)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v0-1-february-17-2015">v0.1 (February 17, 2015)</a></li>
 </ul>
 </li>
 </ul>
@@ -142,6 +142,30 @@ a proximal consensus algorithm for your problem.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x_hat</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">x_init</span><span class="p">)</span>
 </pre></div>
 </div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#proxalgs.core.Optimizer.add_regularizer" title="proxalgs.core.Optimizer.add_regularizer"><tt class="xref py py-obj docutils literal"><span class="pre">add_regularizer</span></tt></a>(proxfun,&nbsp;**kwargs)</td>
+<td>Add a regularizer from the operators module to the list of objectives</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proxalgs.core.Optimizer.clear_regularizers" title="proxalgs.core.Optimizer.clear_regularizers"><tt class="xref py py-obj docutils literal"><span class="pre">clear_regularizers</span></tt></a>()</td>
+<td>Clear any added regularizers (only retains the first objective)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proxalgs.core.Optimizer.hyperopt" title="proxalgs.core.Optimizer.hyperopt"><tt class="xref py py-obj docutils literal"><span class="pre">hyperopt</span></tt></a>(regularizers,&nbsp;validation_loss,&nbsp;...)</td>
+<td>Learn hyperparameters</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proxalgs.core.Optimizer.minimize" title="proxalgs.core.Optimizer.minimize"><tt class="xref py py-obj docutils literal"><span class="pre">minimize</span></tt></a>(theta_init[,&nbsp;max_iter,&nbsp;callback,&nbsp;...])</td>
+<td>Minimize a list of objectives using a proximal consensus algorithm</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proxalgs.core.Optimizer.update_display" title="proxalgs.core.Optimizer.update_display"><tt class="xref py py-obj docutils literal"><span class="pre">update_display</span></tt></a>(iteration,&nbsp;disp_level[,&nbsp;...])</td>
+<td>Prints information about the optimization procedure to standard output</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="proxalgs.core.Optimizer.add_regularizer">
 <tt class="descname">add_regularizer</tt><big>(</big><em>proxfun</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.add_regularizer" title="Permalink to this definition">¶</a></dt>
@@ -176,6 +200,10 @@ rho, and optional arguments given in <cite>**kwargs</cite>.</p>
 <dt id="proxalgs.core.Optimizer.hyperopt">
 <tt class="descname">hyperopt</tt><big>(</big><em>regularizers</em>, <em>validation_loss</em>, <em>theta_init</em>, <em>num_runs</em>, <em>num_iter=50</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.hyperopt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Learn hyperparameters</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Work in progress</p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -221,7 +249,7 @@ corresponding function in the operators module, and each value is the learned hy
 
 <dl class="method">
 <dt id="proxalgs.core.Optimizer.minimize">
-<tt class="descname">minimize</tt><big>(</big><em>theta_init</em>, <em>max_iter=50</em>, <em>callback=None</em>, <em>disp=0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.minimize" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">minimize</tt><big>(</big><em>theta_init</em>, <em>max_iter=50</em>, <em>callback=None</em>, <em>disp=0</em>, <em>mu=10</em>, <em>tau_inc=2</em>, <em>tau_dec=2</em>, <em>tol=0.001</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.minimize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Minimize a list of objectives using a proximal consensus algorithm</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -242,7 +270,7 @@ value (ndarray), and a dictionary that contains a information about the status o
 </div></blockquote>
 <p><strong>disp</strong> : integer, optional</p>
 <blockquote>
-<div><p>determines how much information to display when running. 0 (default): nothing, 3: lots of information</p>
+<div><p>determines how much information to display when running. Ranges from 0 (nothing) to 3 (lots of information)</p>
 </div></blockquote>
 </td>
 </tr>
@@ -257,7 +285,7 @@ value (ndarray), and a dictionary that contains a information about the status o
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>rho_init</strong> : int, optional</p>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>mu</strong> : int, optional</p>
 <blockquote>
 <div><p>initial value of the momentum term, larger values take smaller steps (default: 10)</p>
 </div></blockquote>
@@ -273,6 +301,32 @@ value (ndarray), and a dictionary that contains a information about the status o
 <blockquote class="last">
 <div><p>residual tolerance for assessing convergence. if both the primal and dual residuals are less
 than this value, then the algorithm has converged</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="proxalgs.core.Optimizer.update_display">
+<tt class="descname">update_display</tt><big>(</big><em>iteration</em>, <em>disp_level</em>, <em>col_width=20</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.update_display" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints information about the optimization procedure to standard output</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>iteration</strong> : int</p>
+<blockquote>
+<div><p>The current iteration. Must either a positive integer or -1, which indicates the end of the algorithm</p>
+</div></blockquote>
+<p><strong>disp_level</strong> : int</p>
+<blockquote>
+<div><p>An integer which controls how much information to display, ranging from 0 (nothing) to 3 (lots of stuff)</p>
+</div></blockquote>
+<p><strong>col_width</strong> : int</p>
+<blockquote class="last">
+<div><p>The width of each column in the data table, used if disp_level &gt; 1</p>
 </div></blockquote>
 </td>
 </tr>
@@ -673,8 +727,6 @@ the tensor (using the array axis given by mode).</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog"/>Next <span class="fa fa-arrow-circle-right"></span></a>
-      
       
         <a href="quickstart.html" class="btn btn-neutral" title="Quickstart"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
@@ -705,7 +757,7 @@ the tensor (using the array axis given by mode).</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

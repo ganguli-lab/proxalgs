@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>v0.2 (Work in Progress) &mdash; proxalgs 0.1.0 documentation</title>
+  <title>v0.2 (February 26, 2015) &mdash; proxalgs 0.2.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="proxalgs 0.1.0 documentation" href="../index.html"/> 
+    <link rel="top" title="proxalgs 0.2.0 documentation" href="../index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -75,8 +75,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../changelog.html#v0-2-work-in-progress">v0.2 (Work in Progress)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../changelog.html#v0-1-february-17-2015">v0.1 (February 17 2015)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#roadmap-looking-ahead-to-v1-0">Roadmap (looking ahead to v1.0)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#v0-2-february-26-2015">v0.2 (February 26, 2015)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#v0-1-february-17-2015">v0.1 (February 17, 2015)</a></li>
 </ul>
 </li>
 </ul>
@@ -102,7 +103,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>v0.2 (Work in Progress)</li>
+    <li>v0.2 (February 26, 2015)</li>
       <li class="wy-breadcrumbs-aside">
         
           <a href="../_sources/releases/v0.2.txt" rel="nofollow"> View page source</a>
@@ -113,20 +114,21 @@
 </div>
           <div role="main">
             
-  <div class="section" id="v0-2-work-in-progress">
-<h1>v0.2 (Work in Progress)<a class="headerlink" href="#v0-2-work-in-progress" title="Permalink to this headline">¶</a></h1>
-<p>Currently under development.</p>
-<div class="section" id="goals">
-<h2>Goals<a class="headerlink" href="#goals" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="v0-2-february-26-2015">
+<h1>v0.2 (February 26, 2015)<a class="headerlink" href="#v0-2-february-26-2015" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="new-features">
+<h2>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Clean up hyperoptimization function</li>
-<li>Flesh out test suite</li>
-<li>Add more proximal operators</li>
+<li>Fancy ASCII display updates using the <tt class="docutils literal"><span class="pre">tableprint</span></tt> module</li>
+<li>Clear storage of optimization meta-information in a pandas DataFrame, updated on each iteration of the <tt class="docutils literal"><span class="pre">minimize()</span></tt> function</li>
+<li>Cleaned up the <tt class="docutils literal"><span class="pre">Optimizer.minimize()</span></tt> function, extracting some things (like display updates) into separate helper functions</li>
 </ul>
 </div>
 <div class="section" id="api-changes">
 <h2>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li>Store convergence properties in a pandas DataFrame (in <tt class="docutils literal"><span class="pre">Optimize.metadata</span></tt>), as opposed to dictionary in <tt class="docutils literal"><span class="pre">Optimize.results</span></tt>.</li>
+<li>Moved display updates into a separate helper function</li>
 <li>Updated display options to use the <tt class="docutils literal"><span class="pre">tableprint</span></tt> module, added more display options / levels of detail</li>
 <li>Renamed the <tt class="docutils literal"><span class="pre">num_iter</span></tt> parameter in <tt class="docutils literal"><span class="pre">Optimizer.minimize()</span></tt> to <tt class="docutils literal"><span class="pre">max_iter</span></tt> (more appropriate given that the algorithm</li>
 </ul>
@@ -165,7 +167,7 @@ either a string input (as before) or a function as input (which it handles accor
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

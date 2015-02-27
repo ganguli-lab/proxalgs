@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Changelog &mdash; proxalgs 0.1.0 documentation</title>
+  <title>Changelog &mdash; proxalgs 0.2.0 documentation</title>
   
 
   
@@ -28,8 +28,7 @@
   
 
   
-    <link rel="top" title="proxalgs 0.1.0 documentation" href="index.html"/>
-        <link rel="prev" title="API Reference" href="api.html"/> 
+    <link rel="top" title="proxalgs 0.2.0 documentation" href="index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -76,8 +75,9 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#v0-2-work-in-progress">v0.2 (Work in Progress)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v0-1-february-17-2015">v0.1 (February 17 2015)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#roadmap-looking-ahead-to-v1-0">Roadmap (looking ahead to v1.0)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-2-february-26-2015">v0.2 (February 26, 2015)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-1-february-17-2015">v0.1 (February 17, 2015)</a></li>
 </ul>
 </li>
 </ul>
@@ -116,21 +116,29 @@
             
   <div class="section" id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
-<p>A list of new features, improvements, and bug-fixes in each release.</p>
-<div class="section" id="v0-2-work-in-progress">
-<h2>v0.2 (Work in Progress)<a class="headerlink" href="#v0-2-work-in-progress" title="Permalink to this headline">¶</a></h2>
-<p>Currently under development.</p>
-<div class="section" id="goals">
-<h3>Goals<a class="headerlink" href="#goals" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="roadmap-looking-ahead-to-v1-0">
+<h2>Roadmap (looking ahead to v1.0)<a class="headerlink" href="#roadmap-looking-ahead-to-v1-0" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Clean up hyperoptimization function</li>
-<li>Flesh out test suite</li>
-<li>Add more proximal operators</li>
+<li>better support for hyperparameter optimization</li>
+<li>add tests for more complex optimization problems</li>
+<li>more diagnostic tools</li>
+</ul>
+</div>
+<div class="section" id="v0-2-february-26-2015">
+<h2>v0.2 (February 26, 2015)<a class="headerlink" href="#v0-2-february-26-2015" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="new-features">
+<h3>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Fancy ASCII display updates using the <tt class="docutils literal"><span class="pre">tableprint</span></tt> module</li>
+<li>Clear storage of optimization meta-information in a pandas DataFrame, updated on each iteration of the <tt class="docutils literal"><span class="pre">minimize()</span></tt> function</li>
+<li>Cleaned up the <tt class="docutils literal"><span class="pre">Optimizer.minimize()</span></tt> function, extracting some things (like display updates) into separate helper functions</li>
 </ul>
 </div>
 <div class="section" id="api-changes">
 <h3>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li>Store convergence properties in a pandas DataFrame (in <tt class="docutils literal"><span class="pre">Optimize.metadata</span></tt>), as opposed to dictionary in <tt class="docutils literal"><span class="pre">Optimize.results</span></tt>.</li>
+<li>Moved display updates into a separate helper function</li>
 <li>Updated display options to use the <tt class="docutils literal"><span class="pre">tableprint</span></tt> module, added more display options / levels of detail</li>
 <li>Renamed the <tt class="docutils literal"><span class="pre">num_iter</span></tt> parameter in <tt class="docutils literal"><span class="pre">Optimizer.minimize()</span></tt> to <tt class="docutils literal"><span class="pre">max_iter</span></tt> (more appropriate given that the algorithm</li>
 </ul>
@@ -140,7 +148,7 @@ either a string input (as before) or a function as input (which it handles accor
 </div>
 </div>
 <div class="section" id="v0-1-february-17-2015">
-<h2>v0.1 (February 17 2015)<a class="headerlink" href="#v0-1-february-17-2015" title="Permalink to this headline">¶</a></h2>
+<h2>v0.1 (February 17, 2015)<a class="headerlink" href="#v0-1-february-17-2015" title="Permalink to this headline">¶</a></h2>
 <p>Initial release! Woo!</p>
 <p>Sketched out the <tt class="docutils literal"><span class="pre">Optimizer</span></tt> class in <tt class="docutils literal"><span class="pre">core.py</span></tt>, and added a number of useful proximal operators in <tt class="docutils literal"><span class="pre">operators.py</span></tt>.</p>
 <div class="section" id="api-overview">
@@ -165,13 +173,6 @@ either a string input (as before) or a function as input (which it handles accor
 
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="api.html" class="btn btn-neutral" title="API Reference"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -198,7 +199,7 @@ either a string input (as before) or a function as input (which it handles accor
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

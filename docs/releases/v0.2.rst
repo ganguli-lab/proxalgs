@@ -1,14 +1,15 @@
-v0.2 (Work in Progress)
-=======================
+v0.2 (February 26, 2015)
+========================
 
 New features
 ------------
 - Fancy ASCII display updates using the ``tableprint`` module
 - Clear storage of optimization meta-information in a pandas DataFrame, updated on each iteration of the ``minimize()`` function
+- Cleaned up the ``Optimizer.minimize()`` function, extracting some things (like display updates) into separate helper functions
 
 API Changes
 -----------
-- Store convergence properties in a pandas DataFrame (in ``self.metadata``), as opposed to dictionary in ``self.results``.
+- Store convergence properties in a pandas DataFrame (in ``Optimize.metadata``), as opposed to dictionary in ``Optimize.results``.
 - Moved display updates into a separate helper function
 - Updated display options to use the ``tableprint`` module, added more display options / levels of detail
 - Renamed the ``num_iter`` parameter in ``Optimizer.minimize()`` to ``max_iter`` (more appropriate given that the algorithm
