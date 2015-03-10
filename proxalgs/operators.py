@@ -314,9 +314,9 @@ def sparse(x0, rho, gamma):
         The parameter vector found after running the proximal update step
 
     """
+    lmbda = float(gamma) / rho
 
-    return (x0 * gamma - 1. / rho) * (x0 * gamma >= 1. / rho) \
-           + (x0 * gamma + 1. / rho) * (x0 * gamma <= -1. / rho)
+    return (x0 - lmbda) * (x0 >= lmbda) + (x0 + lmbda) * (x0 <= -lmbda)
 
 
 def nonneg(x0, rho):

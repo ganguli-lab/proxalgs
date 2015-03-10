@@ -97,7 +97,7 @@ class Optimizer(object):
         """
         self.objectives = [self.objectives[0]]
 
-    def minimize(self, theta_init, max_iter=50, callback=None, disp=0, mu=10, tau_inc=2, tau_dec=2, tol=1e-3):
+    def minimize(self, theta_init, max_iter=50, callback=None, disp=0, mu=10.0, tau_inc=2.0, tau_dec=2.0, tol=1e-3):
         """
         Minimize a list of objectives using a proximal consensus algorithm
 
@@ -185,9 +185,9 @@ class Optimizer(object):
 
             # update penalty parameter according to primal and dual residuals
             if primal_resid > mu * dual_resid:
-                rho *= tau_inc
+                rho *= float(tau_inc)
             elif dual_resid > mu * primal_resid:
-                rho /= tau_dec
+                rho /= float(tau_dec)
 
             # update metadata for this iteration
             self.metadata = self.metadata.append({
