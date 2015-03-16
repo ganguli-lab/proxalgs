@@ -33,7 +33,7 @@ def sfo(x0, rho, optimizer, num_steps=5):
 
     Parameters
     ----------
-    x0 : ndarray
+    x0 : array_like
         The starting or initial point used in the proximal update step
 
     rho : float
@@ -47,7 +47,7 @@ def sfo(x0, rho, optimizer, num_steps=5):
 
     Returns
     -------
-    theta : ndarray
+    theta : array_like
         The parameter vector found after running `num_steps` iterations of the SFO optimizer
 
     References
@@ -76,21 +76,21 @@ def poissreg(x0, rho, x, y):
 
     Parameters
     ----------
-    x0 : ndarray
+    x0 : array_like
         The starting or initial point used in the proximal update step
 
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
-    x : (n, k) ndarray
+    x : (n, k) array_like
         A design matrix consisting of n examples of k-dimensional features (or input).
 
-    y : (n,) ndarray
+    y : (n,) array_like
         A vector containing the responses (outupt) to the n features given in x.
 
     Returns
     -------
-    theta : ndarray
+    theta : array_like
         The parameter vector found after running the proximal update step
 
 
@@ -113,23 +113,23 @@ def bfgs(x0, rho, f, fgrad):
 
     Parameters
     ----------
-    x0 : ndarray
+    x0 : array_like
         The starting or initial point used in the proximal update step
 
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
     f : function
-        The function to use when applying the proximal operator. Must take as input a parameter vector (ndarray) and
+        The function to use when applying the proximal operator. Must take as input a parameter vector (array_like) and
         return a real number (floating point value)
 
     df : function
         A function that computes the gradient of `f` with respect to the parameters. Must take as input a parameter
-        vector (ndarray) and returns another ndarray of the same size.
+        vector (array_like) and returns another ndarray of the same size.
 
     Returns
     -------
-    theta : ndarray
+    theta : array_like
         The parameter vector found after running the proximal update step
 
     """
@@ -148,7 +148,7 @@ def smooth(x0, rho, gamma, mode=None):
 
     Parameters
     ----------
-    x0 : ndarray
+    x0 : array_like
         The starting or initial point used in the proximal update step
 
     rho : float
@@ -164,7 +164,7 @@ def smooth(x0, rho, gamma, mode=None):
 
     Returns
     -------
-    theta : ndarray
+    theta : array_like
         The parameter vector found after running the proximal update step
 
     """
@@ -194,7 +194,7 @@ def nucnorm(x0, rho, gamma, mode=None):
 
     Parameters
     ----------
-    x0 : ndarray
+    x0 : array_like
         The starting or initial point used in the proximal update step
 
     rho : float
@@ -210,7 +210,7 @@ def nucnorm(x0, rho, gamma, mode=None):
 
     Returns
     -------
-    theta : ndarray
+    theta : array_like
         The parameter vector found after running the proximal update step
 
     """
@@ -243,18 +243,18 @@ def squared_error(x0, rho, x_obs):
 
     Parameters
     ----------
-    x0 : ndarray
+    x0 : array_like
         The starting or initial point used in the proximal update step
 
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
-    x_obs : ndarray
+    x_obs : array_like
         The true matrix that we want to approximate. The error between the parameters and this matrix is minimized.
 
     Returns
     -------
-    x0 : ndarray
+    x0 : array_like
         The parameter vector found after running the proximal update step
 
     """
@@ -269,7 +269,7 @@ def tvd(x0, rho, gamma):
 
     Parameters
     ----------
-    x0 : ndarray
+    x0 : array_like
         The starting or initial point used in the proximal update step
 
     rho : float
@@ -280,7 +280,7 @@ def tvd(x0, rho, gamma):
 
     Returns
     -------
-    theta : ndarray
+    theta : array_like
         The parameter vector found after running the proximal update step
 
     Raises
@@ -293,13 +293,36 @@ def tvd(x0, rho, gamma):
     return denoise_tv_bregman(x0, rho / gamma)
 
 
+def sgd(x0, rho, fgrad, alpha):
+    """
+    Takes a stochastic gradient step
+
+    Parameters
+    ----------
+    x0 : array_like
+        The starting or initial point used in the proximal update step
+
+    rho : float
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
+
+    fgrad : function
+        Computes the gradient of the objective at the given set of parameters
+
+    alpha : float
+        Learning rate parameter
+
+    """
+
+    return x0 - (float(alpha) / rho) * fgrad(x0)
+
+
 def sparse(x0, rho, gamma):
     """
     Proximal operator for the l1 norm (induces sparsity)
 
     Parameters
     ----------
-    x0 : ndarray
+    x0 : array_like
         The starting or initial point used in the proximal update step
 
     rho : float
@@ -310,10 +333,11 @@ def sparse(x0, rho, gamma):
 
     Returns
     -------
-    theta : ndarray
+    theta : array_like
         The parameter vector found after running the proximal update step
 
     """
+
     lmbda = float(gamma) / rho
 
     return (x0 - lmbda) * (x0 >= lmbda) + (x0 + lmbda) * (x0 <= -lmbda)
@@ -325,7 +349,7 @@ def nonneg(x0, rho):
 
     Parameters
     ----------
-    x0 : ndarray
+    x0 : array_like
         The starting or initial point used in the proximal update step
 
     rho : float
@@ -333,7 +357,7 @@ def nonneg(x0, rho):
 
     Returns
     -------
-    theta : ndarray
+    theta : array_like
         The parameter vector found after running the proximal update step
 
     """
@@ -351,21 +375,21 @@ def linsys(x0, rho, P, q):
 
     Parameters
     ----------
-    x0 : ndarray
+    x0 : array_like
         The starting or initial point used in the proximal update step
 
     rho : float
         Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
-    P : ndarray
+    P : array_like
         The symmetric matrix A^TA, where we are trying to approximate Ax=b
 
-    q : ndarray
+    q : array_like
         The vector A^Tb, where we are trying to approximate Ax=b
 
     Returns
     -------
-    theta : ndarray
+    theta : array_like
         The parameter vector found after running the proximal update step
 
     """
