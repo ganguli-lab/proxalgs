@@ -1,0 +1,11 @@
+v0.3 (work in progress)
+=======================
+
+New features
+------------
+
+API Changes
+-----------
+- Fixed bug in ``core.minimize`` where the penalty parameter updates used integer rather than floating point division (67c75f4_)
+
+.. _67c75f4: https://github.com/ganguli-lab/proxalgs/commit/67c75f44ef8f7ce6342644712554642bb892f33d

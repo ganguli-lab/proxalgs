@@ -77,6 +77,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#roadmap-looking-ahead-to-v1-0">Roadmap (looking ahead to v1.0)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v0-3-work-in-progress">v0.3 (work in progress)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v0-2-february-26-2015">v0.2 (February 26, 2015)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v0-1-february-17-2015">v0.1 (February 17, 2015)</a></li>
 </ul>
@@ -249,7 +250,7 @@ corresponding function in the operators module, and each value is the learned hy
 
 <dl class="method">
 <dt id="proxalgs.core.Optimizer.minimize">
-<tt class="descname">minimize</tt><big>(</big><em>theta_init</em>, <em>max_iter=50</em>, <em>callback=None</em>, <em>disp=0</em>, <em>mu=10</em>, <em>tau_inc=2</em>, <em>tau_dec=2</em>, <em>tol=0.001</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.minimize" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">minimize</tt><big>(</big><em>theta_init</em>, <em>max_iter=50</em>, <em>callback=None</em>, <em>disp=0</em>, <em>mu=10.0</em>, <em>tau_inc=2.0</em>, <em>tau_dec=2.0</em>, <em>tol=0.001</em><big>)</big><a class="headerlink" href="#proxalgs.core.Optimizer.minimize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Minimize a list of objectives using a proximal consensus algorithm</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -356,7 +357,7 @@ than this value, then the algorithm has converged</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote>
 <div><p>The starting or initial point used in the proximal update step</p>
 </div></blockquote>
@@ -366,17 +367,17 @@ than this value, then the algorithm has converged</p>
 </div></blockquote>
 <p><strong>f</strong> : function</p>
 <blockquote>
-<div><p>The function to use when applying the proximal operator. Must take as input a parameter vector (ndarray) and
+<div><p>The function to use when applying the proximal operator. Must take as input a parameter vector (array_like) and
 return a real number (floating point value)</p>
 </div></blockquote>
 <p><strong>df</strong> : function</p>
 <blockquote>
 <div><p>A function that computes the gradient of <cite>f</cite> with respect to the parameters. Must take as input a parameter
-vector (ndarray) and returns another ndarray of the same size.</p>
+vector (array_like) and returns another ndarray of the same size.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : array_like</p>
 <blockquote class="last">
 <div><p>The parameter vector found after running the proximal update step</p>
 </div></blockquote>
@@ -397,7 +398,7 @@ vector (ndarray) and returns another ndarray of the same size.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote>
 <div><p>The starting or initial point used in the proximal update step</p>
 </div></blockquote>
@@ -405,17 +406,17 @@ vector (ndarray) and returns another ndarray of the same size.</p>
 <blockquote>
 <div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
 </div></blockquote>
-<p><strong>P</strong> : ndarray</p>
+<p><strong>P</strong> : array_like</p>
 <blockquote>
 <div><p>The symmetric matrix A^TA, where we are trying to approximate Ax=b</p>
 </div></blockquote>
-<p><strong>q</strong> : ndarray</p>
+<p><strong>q</strong> : array_like</p>
 <blockquote>
 <div><p>The vector A^Tb, where we are trying to approximate Ax=b</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : array_like</p>
 <blockquote class="last">
 <div><p>The parameter vector found after running the proximal update step</p>
 </div></blockquote>
@@ -433,7 +434,7 @@ vector (ndarray) and returns another ndarray of the same size.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote>
 <div><p>The starting or initial point used in the proximal update step</p>
 </div></blockquote>
@@ -443,7 +444,7 @@ vector (ndarray) and returns another ndarray of the same size.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : array_like</p>
 <blockquote class="last">
 <div><p>The parameter vector found after running the proximal update step</p>
 </div></blockquote>
@@ -461,7 +462,7 @@ vector (ndarray) and returns another ndarray of the same size.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote>
 <div><p>The starting or initial point used in the proximal update step</p>
 </div></blockquote>
@@ -481,7 +482,7 @@ the tensor (using the array axis given by mode).</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : array_like</p>
 <blockquote class="last">
 <div><p>The parameter vector found after running the proximal update step</p>
 </div></blockquote>
@@ -500,7 +501,7 @@ the tensor (using the array axis given by mode).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote>
 <div><p>The starting or initial point used in the proximal update step</p>
 </div></blockquote>
@@ -508,17 +509,17 @@ the tensor (using the array axis given by mode).</p>
 <blockquote>
 <div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
 </div></blockquote>
-<p><strong>x</strong> : (n, k) ndarray</p>
+<p><strong>x</strong> : (n, k) array_like</p>
 <blockquote>
 <div><p>A design matrix consisting of n examples of k-dimensional features (or input).</p>
 </div></blockquote>
-<p><strong>y</strong> : (n,) ndarray</p>
+<p><strong>y</strong> : (n,) array_like</p>
 <blockquote>
 <div><p>A vector containing the responses (outupt) to the n features given in x.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : array_like</p>
 <blockquote class="last">
 <div><p>The parameter vector found after running the proximal update step</p>
 </div></blockquote>
@@ -536,7 +537,7 @@ the tensor (using the array axis given by mode).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote>
 <div><p>The starting or initial point used in the proximal update step</p>
 </div></blockquote>
@@ -554,7 +555,7 @@ the tensor (using the array axis given by mode).</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : array_like</p>
 <blockquote class="last">
 <div><p>The parameter vector found after running <cite>num_steps</cite> iterations of the SFO optimizer</p>
 </div></blockquote>
@@ -577,6 +578,36 @@ arXiv:1311.2115 (2013)</a>.</td></tr>
 </dd></dl>
 
 <dl class="function">
+<dt id="proxalgs.operators.sgd">
+<tt class="descclassname">proxalgs.operators.</tt><tt class="descname">sgd</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>fgrad</em>, <em>alpha</em><big>)</big><a class="headerlink" href="#proxalgs.operators.sgd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a stochastic gradient step</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
+<blockquote>
+<div><p>The starting or initial point used in the proximal update step</p>
+</div></blockquote>
+<p><strong>rho</strong> : float</p>
+<blockquote>
+<div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
+</div></blockquote>
+<p><strong>fgrad</strong> : function</p>
+<blockquote>
+<div><p>Computes the gradient of the objective at the given set of parameters</p>
+</div></blockquote>
+<p><strong>alpha</strong> : float</p>
+<blockquote class="last">
+<div><p>Learning rate parameter</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="proxalgs.operators.smooth">
 <tt class="descclassname">proxalgs.operators.</tt><tt class="descname">smooth</tt><big>(</big><em>x0</em>, <em>rho</em>, <em>gamma</em>, <em>mode=None</em><big>)</big><a class="headerlink" href="#proxalgs.operators.smooth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Proximal operator for a smoothing function enforced via the discrete laplacian operator</p>
@@ -584,7 +615,7 @@ arXiv:1311.2115 (2013)</a>.</td></tr>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote>
 <div><p>The starting or initial point used in the proximal update step</p>
 </div></blockquote>
@@ -604,7 +635,7 @@ the tensor (using the array axis given by mode).</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : array_like</p>
 <blockquote class="last">
 <div><p>The parameter vector found after running the proximal update step</p>
 </div></blockquote>
@@ -622,7 +653,7 @@ the tensor (using the array axis given by mode).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote>
 <div><p>The starting or initial point used in the proximal update step</p>
 </div></blockquote>
@@ -636,7 +667,7 @@ the tensor (using the array axis given by mode).</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : array_like</p>
 <blockquote class="last">
 <div><p>The parameter vector found after running the proximal update step</p>
 </div></blockquote>
@@ -654,7 +685,7 @@ the tensor (using the array axis given by mode).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote>
 <div><p>The starting or initial point used in the proximal update step</p>
 </div></blockquote>
@@ -662,13 +693,13 @@ the tensor (using the array axis given by mode).</p>
 <blockquote>
 <div><p>Momentum parameter for the proximal step (larger value -&gt; stays closer to x0)</p>
 </div></blockquote>
-<p><strong>x_obs</strong> : ndarray</p>
+<p><strong>x_obs</strong> : array_like</p>
 <blockquote>
 <div><p>The true matrix that we want to approximate. The error between the parameters and this matrix is minimized.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote class="last">
 <div><p>The parameter vector found after running the proximal update step</p>
 </div></blockquote>
@@ -687,7 +718,7 @@ the tensor (using the array axis given by mode).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : ndarray</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x0</strong> : array_like</p>
 <blockquote>
 <div><p>The starting or initial point used in the proximal update step</p>
 </div></blockquote>
@@ -701,7 +732,7 @@ the tensor (using the array axis given by mode).</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> : array_like</p>
 <blockquote>
 <div><p>The parameter vector found after running the proximal update step</p>
 </div></blockquote>

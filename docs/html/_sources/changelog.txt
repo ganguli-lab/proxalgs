@@ -8,5 +8,6 @@ Roadmap (looking ahead to v1.0)
 - add tests for more complex optimization problems
 - more diagnostic tools
 
+.. include:: releases/v0.3.rst
 .. include:: releases/v0.2.rst
 .. include:: releases/v0.1.rst

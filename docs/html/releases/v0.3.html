@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>v0.1 (February 17, 2015) &mdash; proxalgs 0.2.0 documentation</title>
+  <title>v0.3 (work in progress) &mdash; proxalgs 0.2.0 documentation</title>
   
 
   
@@ -104,10 +104,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>v0.1 (February 17, 2015)</li>
+    <li>v0.3 (work in progress)</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/releases/v0.1.txt" rel="nofollow"> View page source</a>
+          <a href="../_sources/releases/v0.3.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -115,24 +115,15 @@
 </div>
           <div role="main">
             
-  <div class="section" id="v0-1-february-17-2015">
-<h1>v0.1 (February 17, 2015)<a class="headerlink" href="#v0-1-february-17-2015" title="Permalink to this headline">¶</a></h1>
-<p>Initial release! Woo!</p>
-<p>Sketched out the <tt class="docutils literal"><span class="pre">Optimizer</span></tt> class in <tt class="docutils literal"><span class="pre">core.py</span></tt>, and added a number of useful proximal operators in <tt class="docutils literal"><span class="pre">operators.py</span></tt>.</p>
-<div class="section" id="api-overview">
-<h2>API Overview<a class="headerlink" href="#api-overview" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>The main functions of the <tt class="docutils literal"><span class="pre">Optimizer</span></tt> class are <tt class="docutils literal"><span class="pre">add_regularizer</span></tt> and <tt class="docutils literal"><span class="pre">minimize</span></tt></li>
-<li>The functions in <tt class="docutils literal"><span class="pre">operator</span></tt> can mostly be used by passing function names as strings to <tt class="docutils literal"><span class="pre">Optimizer.add_regularizer</span></tt></li>
-<li>Rudimentary support for hyperparameter optimization is provided by the <tt class="docutils literal"><span class="pre">Optimizer.hyperopt</span></tt> function</li>
-</ul>
+  <div class="section" id="v0-3-work-in-progress">
+<h1>v0.3 (work in progress)<a class="headerlink" href="#v0-3-work-in-progress" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="new-features">
+<h2>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="known-issues">
-<h2>Known Issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="api-changes">
+<h2>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Documentation needs to be fleshed out</li>
-<li>The support for tensor operations is not very clean. Still thinking about the best way to do this</li>
-<li>Tests have been written for two toy cases, low-rank matrix approximation and sparse regression</li>
+<li>Fixed bug in <tt class="docutils literal"><span class="pre">core.minimize</span></tt> where the penalty parameter updates used integer rather than floating point division (<a class="reference external" href="https://github.com/ganguli-lab/proxalgs/commit/67c75f44ef8f7ce6342644712554642bb892f33d">67c75f4</a>)</li>
 </ul>
 </div>
 </div>

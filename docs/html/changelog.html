@@ -76,6 +76,7 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Changelog</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#roadmap-looking-ahead-to-v1-0">Roadmap (looking ahead to v1.0)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-3-work-in-progress">v0.3 (work in progress)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-2-february-26-2015">v0.2 (February 26, 2015)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-1-february-17-2015">v0.1 (February 17, 2015)</a></li>
 </ul>
@@ -124,18 +125,30 @@
 <li>more diagnostic tools</li>
 </ul>
 </div>
-<div class="section" id="v0-2-february-26-2015">
-<h2>v0.2 (February 26, 2015)<a class="headerlink" href="#v0-2-february-26-2015" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="v0-3-work-in-progress">
+<h2>v0.3 (work in progress)<a class="headerlink" href="#v0-3-work-in-progress" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="new-features">
 <h3>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="api-changes">
+<h3>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Fixed bug in <tt class="docutils literal"><span class="pre">core.minimize</span></tt> where the penalty parameter updates used integer rather than floating point division (<a class="reference external" href="https://github.com/ganguli-lab/proxalgs/commit/67c75f44ef8f7ce6342644712554642bb892f33d">67c75f4</a>)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="v0-2-february-26-2015">
+<h2>v0.2 (February 26, 2015)<a class="headerlink" href="#v0-2-february-26-2015" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>New features<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Fancy ASCII display updates using the <tt class="docutils literal"><span class="pre">tableprint</span></tt> module</li>
 <li>Clear storage of optimization meta-information in a pandas DataFrame, updated on each iteration of the <tt class="docutils literal"><span class="pre">minimize()</span></tt> function</li>
 <li>Cleaned up the <tt class="docutils literal"><span class="pre">Optimizer.minimize()</span></tt> function, extracting some things (like display updates) into separate helper functions</li>
 </ul>
 </div>
-<div class="section" id="api-changes">
-<h3>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>API Changes<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Store convergence properties in a pandas DataFrame (in <tt class="docutils literal"><span class="pre">Optimize.metadata</span></tt>), as opposed to dictionary in <tt class="docutils literal"><span class="pre">Optimize.results</span></tt>.</li>
 <li>Moved display updates into a separate helper function</li>
