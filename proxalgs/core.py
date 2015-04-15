@@ -191,10 +191,10 @@ class Optimizer(object):
 
             # update metadata for this iteration
             self.metadata = self.metadata.append({
-                'Primal residual': primal_resid,
-                'Dual residual': dual_resid,
-                'Elapsed time (s)': time.time() - tstart,
-                'Momentum term (rho)': rho,
+                'Primal resid': primal_resid,
+                'Dual resid': dual_resid,
+                'Time (s)': time.time() - tstart,
+                'Momentum (rho)': rho,
                 'Primal runtimes': primal_runtimes
             }, ignore_index=True)
 
@@ -218,7 +218,7 @@ class Optimizer(object):
 
         return self.theta
 
-    def update_display(self, iteration, disp_level, col_width=20):
+    def update_display(self, iteration, disp_level, col_width=12):
         """
         Prints information about the optimization procedure to standard output
 
@@ -252,9 +252,9 @@ class Optimizer(object):
                 data = self.metadata.tail(1).irow(0).to_dict()
 
                 # choose what keys to use
-                keys = ['Elapsed time (s)', 'Primal residual', 'Dual residual']
+                keys = ['Time (s)', 'Primal resid', 'Dual resid']
                 if disp_level > 2:
-                    keys += ['Momentum term (rho)', 'Primal runtimes']
+                    keys += ['Momentum (rho)', 'Primal runtimes']
 
                 # initial update. print out table headers
                 if iteration == 1:
@@ -266,7 +266,7 @@ class Optimizer(object):
                 # print data
                 tabledata = map(lambda d: float(d) if d.size == 1 else ', '.join(map(lambda i: '{:.2f}'.format(i), d)),
                                 [np.array(data[key]) for key in keys])
-                print(tableprint.row(tabledata, column_width=col_width, precision='8g'))
+                print(tableprint.row(tabledata, column_width=col_width, precision='4g'))
 
                 if iteration == -1:
                     print(tableprint.hr(len(keys), column_width=col_width) + '\n')
