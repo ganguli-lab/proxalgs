@@ -1,5 +1,7 @@
 # Proximal Algorithms
 
+[![Build Status](https://travis-ci.org/ganguli-lab/proxalgs.svg?branch=master)](https://travis-ci.org/ganguli-lab/proxalgs)
+
 ## Installation
 ```bash
 git clone git@github.com:ganguli-lab/proxalgs.git
