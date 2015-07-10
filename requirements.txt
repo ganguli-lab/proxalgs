@@ -1,6 +1,4 @@
 numpy
 scipy
-hyperopt
+toolz
 scikit-tensor
-tableprint
-pandas

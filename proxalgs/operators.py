@@ -3,8 +3,6 @@ Proximal operators
 
 Evaluates proximal operators for various functions.
 
-TODO: flesh out details
-
 Notes
 -----
 evaluates expressions of the form:
@@ -20,54 +18,28 @@ from scipy.sparse import spdiags
 from scipy.sparse.linalg import spsolve
 from sktensor import dtensor
 from skimage.restoration import denoise_tv_bregman
+from toolz import curry
+from toolz.functoolz import isunary
+from descent import algorithms
 
 
-def sfo(x0, rho, optimizer, num_steps=5):
+@curry
+def gdm(x0, rho, df=None, eta=1e-2, mu=0, numsteps=100):
     """
-    Proximal operator for an arbitrary function minimized via the Sum-of-Functions optimizer (SFO)
-
-    Notes
-    -----
-    SFO is a function optimizer for the case where the target function breaks into a sum over minibatches, or a sum
-    over contributing functions. It is described in more detail in [1]_.
-
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
-
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
-
-    optimizer : SFO instance
-        Instance of the SFO object in `SFO_admm.py`
-
-    num_steps : int, optional
-        Number of SFO steps to take
-
-    Returns
-    -------
-    theta : array_like
-        The parameter vector found after running `num_steps` iterations of the SFO optimizer
-
-    References
-    ----------
-    .. [1] Jascha Sohl-Dickstein, Ben Poole, and Surya Ganguli. Fast large-scale optimization by unifying stochastic
-        gradient and quasi-Newton methods. International Conference on Machine Learning (2014). `arXiv preprint
-        arXiv:1311.2115 (2013) <http://arxiv.org/abs/1311.2115>`_.
-
+    Proximal operator via gradient descent with momentum
     """
 
-    # set the current parameter value of SFO to the given value
-    optimizer.set_theta(x0, float(rho))
+    assert isunary(df), "Invalid gradient function (must be unary)"
 
-    # set the previous ADMM location as the flattened paramter array
-    optimizer.theta_admm_prev = optimizer.theta_original_to_flat(x0)
+    grad = lambda x: df(x) + rho * (x - x0)
+    opt = algorithms.gdm(grad, x0, eta=eta, mu=mu)
+    for _ in range(numsteps):
+        xk = next(opt)
 
-    # run the optimizer for n steps
-    return optimizer.optimize(num_steps=num_steps)
+    return xk
 
 
+@curry
 def poissreg(x0, rho, x, y):
     """
     Proximal operator for Poisson regression
@@ -105,6 +77,7 @@ def poissreg(x0, rho, x, y):
     return bfgs(x0, rho, f, df)
 
 
+@curry
 def bfgs(x0, rho, f, fgrad):
     """
     Proximal operator for minimizing an arbitrary function using BFGS
@@ -142,6 +115,7 @@ def bfgs(x0, rho, f, fgrad):
     return opt.fmin_bfgs(g, x0, dg, disp=False)
 
 
+@curry
 def smooth(x0, rho, gamma, mode=None):
     """
     Proximal operator for a smoothing function enforced via the discrete laplacian operator
@@ -188,6 +162,7 @@ def smooth(x0, rho, gamma, mode=None):
     return x_out
 
 
+@curry
 def nucnorm(x0, rho, gamma, mode=None):
     """
     Proximal operator for the nuclear norm (sum of the singular values of a matrix)
@@ -237,6 +212,7 @@ def nucnorm(x0, rho, gamma, mode=None):
     return x_out
 
 
+@curry
 def squared_error(x0, rho, x_obs):
     """
     Proximal operator for the pairwise difference between two matrices (Frobenius norm)
@@ -261,6 +237,7 @@ def squared_error(x0, rho, x_obs):
     return (x0 + x_obs / rho) / (1 + 1 / rho)
 
 
+@curry
 def tvd(x0, rho, gamma):
     """
     Proximal operator for the total variation denoising penalty
@@ -293,29 +270,7 @@ def tvd(x0, rho, gamma):
     return denoise_tv_bregman(x0, rho / gamma)
 
 
-def sgd(x0, rho, fgrad, alpha):
-    """
-    Takes a stochastic gradient step
-
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
-
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
-
-    fgrad : function
-        Computes the gradient of the objective at the given set of parameters
-
-    alpha : float
-        Learning rate parameter
-
-    """
-
-    return x0 - (float(alpha) / rho) * fgrad(x0)
-
-
+@curry
 def sparse(x0, rho, gamma):
     """
     Proximal operator for the l1 norm (induces sparsity)
@@ -343,6 +298,7 @@ def sparse(x0, rho, gamma):
     return (x0 - lmbda) * (x0 >= lmbda) + (x0 + lmbda) * (x0 <= -lmbda)
 
 
+@curry
 def nonneg(x0, rho):
     """
     Proximal operator for enforcing non-negativity (indicator function over the set x >= 0)
@@ -365,6 +321,7 @@ def nonneg(x0, rho):
     return np.maximum(x0, 0)
 
 
+@curry
 def linsys(x0, rho, P, q):
     """
     Proximal operator for the linear approximation Ax = b

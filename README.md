@@ -8,8 +8,18 @@ pip install -r requirements.txt
 python setup.py install
 ```
 
-## Requirements
-Numpy, scipy, and [hyperopt](https://github.com/hyperopt/hyperopt).
+## Dependencies
+
+Required:
+- numpy
+- scipy
+- toolz
+- scikit-tensor
+
+Optional:
+- scikit-image
+- tableprint
+- descent
 
 ## Development
 Pull requests welcome! Please stick to the [NumPy/SciPy documentation standards](https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard)

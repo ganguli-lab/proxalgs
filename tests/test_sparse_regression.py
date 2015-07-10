@@ -25,7 +25,7 @@ def generate_sparse_vector(n=100, m=50, p=0.1, eta=0.05, seed=1234):
     x_true = 10 * np.random.randn(n) * (np.random.rand(n) < p)
 
     # the noisy, observed signal
-    A = np.random.randn(m,n)
+    A = np.random.randn(m, n)
     x_obs = A.dot(x_true)
 
 

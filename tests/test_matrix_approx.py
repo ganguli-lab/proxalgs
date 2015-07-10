@@ -23,7 +23,7 @@ def generate_lowrank_matrix(n=10, m=20, k=3, eta=0.05, seed=1234):
 
     # the true low-rank matrix
     x_true = np.sin(np.linspace(0, 2 * np.pi, n)).reshape(-1, 1).dot(
-             np.cos(np.linspace(0, 2 * np.pi, m)).reshape(1, -1))
+        np.cos(np.linspace(0, 2 * np.pi, m)).reshape(1, -1))
 
     # the noisy, observed matrix
     x_obs = x_true + eta * np.random.randn(n, m)

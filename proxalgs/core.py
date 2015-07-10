@@ -71,20 +71,14 @@ class Optimizer(object):
         # if proxfun is a string, grab the corresponding function from operators.py
         if isinstance(proxfun, str):
             try:
-                def wrapper(theta, rho):
-                    return getattr(operators, proxfun)(theta.copy(), float(rho), **kwargs)
-
-                self.objectives.append(wrapper)
+                self.objectives.append(lambda theta, rho: getattr(operators, proxfun)(theta.copy(), float(rho), **kwargs))
 
             except AttributeError as e:
                 print(str(e) + '\n' + 'Could not find the function ' + proxfun + ' in the operators module!')
 
         # if proxfun is a function, add it as its own proximal operator
         elif hasattr(proxfun, '__call__'):
-            def wrapper(theta, rho):
-                return proxfun(theta.copy(), float(rho), **kwargs)
-
-            self.objectives.append(wrapper)
+            self.objectives.append(lambda theta, rho: proxfun(theta.copy(), float(rho)))
 
         # type of proxfun must be a string or a function
         else:
@@ -151,7 +145,7 @@ class Optimizer(object):
         duals = [np.zeros(theta_init.size) for _ in range(num_obj)]
         theta_avg = np.mean(primals, axis=0).ravel()
 
-        # penalty parameter scheduling (see sect. 3.4.1 of the Boyd and Parikh ADMM paper)
+        # penalty parameter
         rho = mu
 
         # store cumulative runtimes of each iteration, starting now
@@ -159,18 +153,14 @@ class Optimizer(object):
 
         # run ADMM iterations
         self.converged = False
-        cur_iter = 0
         for cur_iter in range(max_iter):
 
             # store the parameters from the previous iteration
             theta_prev = theta_avg
 
             # update each primal variable copy by taking a proximal step via each objective
-            primal_runtimes = list()
             for varidx, dual in enumerate(duals):
-                primal_start = time.time()
                 primals[varidx] = self.objectives[varidx]((theta_prev - dual).reshape(orig_shape), rho).ravel()
-                primal_runtimes.append(time.time() - primal_start)
 
             # average primal copies
             theta_avg = np.mean(primals, axis=0)
@@ -184,6 +174,7 @@ class Optimizer(object):
             dual_resid = num_obj * rho ** 2 * np.linalg.norm(theta_avg - theta_prev)
 
             # update penalty parameter according to primal and dual residuals
+            # (see sect. 3.4.1 of the Boyd and Parikh ADMM paper)
             if primal_resid > mu * dual_resid:
                 rho *= float(tau_inc)
             elif dual_resid > mu * primal_resid:
@@ -194,8 +185,7 @@ class Optimizer(object):
                 'Primal resid': primal_resid,
                 'Dual resid': dual_resid,
                 'Time (s)': time.time() - tstart,
-                'Momentum (rho)': rho,
-                'Primal runtimes': primal_runtimes
+                'Momentum': rho
             }, ignore_index=True)
 
             # call the callback function with the current parameters and metadata from the last iteration
@@ -215,7 +205,6 @@ class Optimizer(object):
 
         # store and return final parameters
         self.theta = theta_avg.reshape(orig_shape)
-
         return self.theta
 
     def update_display(self, iteration, disp_level, col_width=12):
@@ -252,9 +241,7 @@ class Optimizer(object):
                 data = self.metadata.tail(1).irow(0).to_dict()
 
                 # choose what keys to use
-                keys = ['Time (s)', 'Primal resid', 'Dual resid']
-                if disp_level > 2:
-                    keys += ['Momentum (rho)', 'Primal runtimes']
+                keys = ['Time (s)', 'Primal resid', 'Dual resid', 'Momentum']
 
                 # initial update. print out table headers
                 if iteration == 1:
@@ -264,8 +251,7 @@ class Optimizer(object):
                     print(hr)
 
                 # print data
-                tabledata = map(lambda d: float(d) if d.size == 1 else ', '.join(map(lambda i: '{:.2f}'.format(i), d)),
-                                [np.array(data[key]) for key in keys])
+                tabledata = map(float, [np.array(data[key]) for key in keys])
                 print(tableprint.row(tabledata, column_width=col_width, precision='4g'))
 
                 if iteration == -1:
