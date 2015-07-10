@@ -11,6 +11,7 @@ python setup.py install
 ## Dependencies
 
 Required:
+- python 2.7 or higher
 - numpy
 - scipy
 - toolz
