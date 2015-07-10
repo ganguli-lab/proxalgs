@@ -8,10 +8,10 @@ A proximal consensus optimization algorithm
 # imports
 import time
 import numpy as np
-import pandas as pd
 import operators
 import hyperopt
 import tableprint
+from toolz import last, valmap
 
 # exports
 __all__ = ['Optimizer']
@@ -45,7 +45,12 @@ class Optimizer(object):
         self.objectives = list()
         self.add_regularizer(objfun, **kwargs)
         self.converged = False
-        self.metadata = pd.DataFrame()
+        self.metadata = {
+            'Primal resid': [],
+            'Dual resid': [],
+            'Time (s)': [],
+            'Momentum': []
+        }
         self.theta = None
         self.hyperopt_trials = None
 
@@ -151,6 +156,14 @@ class Optimizer(object):
         # store cumulative runtimes of each iteration, starting now
         tstart = time.time()
 
+        # clear metadata
+        self.metadata = {
+            'Primal resid': [],
+            'Dual resid': [],
+            'Time (s)': [],
+            'Momentum': []
+        }
+
         # run ADMM iterations
         self.converged = False
         for cur_iter in range(max_iter):
@@ -181,12 +194,10 @@ class Optimizer(object):
                 rho /= float(tau_dec)
 
             # update metadata for this iteration
-            self.metadata = self.metadata.append({
-                'Primal resid': primal_resid,
-                'Dual resid': dual_resid,
-                'Time (s)': time.time() - tstart,
-                'Momentum': rho
-            }, ignore_index=True)
+            self.metadata['Primal resid'].append(primal_resid)
+            self.metadata['Dual resid'].append(dual_resid)
+            self.metadata['Time (s)'].append(time.time() - tstart)
+            self.metadata['Momentum'].append(rho)
 
             # call the callback function with the current parameters and metadata from the last iteration
             if callback is not None:
@@ -238,7 +249,7 @@ class Optimizer(object):
             if disp_level > 1:
 
                 # get the metadata from this iteration
-                data = self.metadata.tail(1).irow(0).to_dict()
+                data = valmap(last, self.metadata)
 
                 # choose what keys to use
                 keys = ['Time (s)', 'Primal resid', 'Dual resid', 'Momentum']
@@ -259,7 +270,7 @@ class Optimizer(object):
 
             # print convergence statement
             if iteration == -1 and self.converged:
-                print('Converged after %i iterations!' % len(self.metadata))
+                print('Converged after %i iterations!' % len(self.metadata.values()[0]))
 
     def hyperopt(self, regularizers, validation_loss, theta_init, num_runs, num_iter=50):
         """
