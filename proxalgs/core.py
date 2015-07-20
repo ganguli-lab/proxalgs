@@ -89,7 +89,30 @@ class Optimizer(object):
         else:
             raise TypeError('The argument "proxfun" must be a string or a function!')
 
-    def clear_regularizers(self):
+    def set_regularizers(self, regularizers, clear=True):
+        """
+        Adds a set of regularizers
+
+        Parameters
+        ----------
+        regularizers : dict
+            Each key is the name of a corresponding proximal operator, and the
+            value associated with that key is a set of keyword arguments
+
+        clear : boolean, optional
+            Whether or not to clear the existing regularizers. (Default: True)
+
+        """
+
+        # clear existing operators
+        if clear:
+            self.clear()
+
+        # add new regularizers
+        list([self.add_regularizer(proxfun, **regularizers[proxfun])
+              for proxfun in regularizers.keys()])
+
+    def clear(self):
         """
         Clear any added regularizers (only retains the first objective)
 
