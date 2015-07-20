@@ -40,6 +40,55 @@ def gdm(x0, rho, df=None, eta=1e-2, mu=0, numsteps=100):
 
 
 @curry
+def sfo(x0, rho, optimizer, num_steps=50):
+    """
+    Proximal operator for an arbitrary function minimized via the Sum-of-Functions optimizer (SFO)
+
+    Notes
+    -----
+    SFO is a function optimizer for the
+    case where the target function breaks into a sum over minibatches, or a sum
+    over contributing functions. It is
+    described in more detail in [1]_.
+
+    Parameters
+    ----------
+    x0 : array_like
+        The starting or initial point used in the proximal update step
+
+    rho : float
+        Momentum parameter for the proximal step (larger value -> stays closer to x0)
+
+    optimizer : SFO instance
+        Instance of the SFO object in `SFO_admm.py`
+
+    num_steps : int, optional
+        Number of SFO steps to take
+
+    Returns
+    -------
+    theta : array_like
+    The parameter vector found after running `num_steps` iterations of the SFO optimizer
+
+    References
+    ----------
+    .. [1] Jascha Sohl-Dickstein, Ben Poole, and Surya Ganguli. Fast large-scale optimization by unifying stochastic
+        gradient and quasi-Newton methods. International Conference on Machine Learning (2014). `arXiv preprint
+        arXiv:1311.2115 (2013) <http://arxiv.org/abs/1311.2115>`_.
+
+    """
+
+    # set the current parameter value of SFO to the given value
+    optimizer.set_theta(x0, float(rho))
+
+    # set the previous ADMM location as the flattened paramter array
+    optimizer.theta_admm_prev = optimizer.theta_original_to_flat(x0)
+
+    # run the optimizer for n steps
+    return optimizer.optimize(num_steps=num_steps)
+
+
+@curry
 def poissreg(x0, rho, x, y):
     """
     Proximal operator for Poisson regression
