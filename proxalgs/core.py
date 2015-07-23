@@ -8,8 +8,7 @@ A proximal consensus optimization algorithm
 # imports
 import time
 import numpy as np
-import operators
-import hyperopt
+from . import operators
 import tableprint
 from toolz import last, valmap
 
@@ -52,7 +51,6 @@ class Optimizer(object):
             'Momentum': []
         }
         self.theta = None
-        self.hyperopt_trials = None
 
     def __str__(self):
         return "Optimizer object with %i objectives." % len(self.objectives)
@@ -294,95 +292,3 @@ class Optimizer(object):
             # print convergence statement
             if iteration == -1 and self.converged:
                 print('Converged after %i iterations!' % len(self.metadata.values()[0]))
-
-    def hyperopt(self, regularizers, validation_loss, theta_init, num_runs, num_iter=50):
-        """
-        Learn hyperparameters
-
-        .. warning:: Work in progress
-
-        Parameters
-        ----------
-        regularizers : list
-            A list of tuples. Each tuple contains four items. The first is a string (the name of the regularizer,
-            which can be anything you want). The second is EITHER a string and the name of a function in the operators
-            module which has three arguments (x0, rho, gamma) OR a custom function that accepts three arguments
-            (x0, rho, and gamma) and applies a proximal operator to the point x0. The final two parameters are floats
-            which define the bounds of the log-transformed search space for the regularization parameters (e.g bounds
-            of -3 and 0 would correspond to searching values from 0.001 to 1)
-
-        validation_loss : function
-            A callback function that takes a single argument, a value for the parameters, and evaluates the error or
-            loss on some held out data.
-
-        theta_init : array_like
-            An array corresponding to the initial parameter values for optimization
-
-        num_runs : int
-            The number of different hyperparameter combinations to search through
-
-        Returns
-        -------
-        gamma_opt : dict
-            a dictionary containing the optimal hyperparameters found. Each key is a regularizer with a
-            corresponding function in the operators module, and each value is the learned hyperparameter value
-
-        trials : dict
-            Results object from hyperopt.fmin()
-
-        """
-
-        # verify inputs are the right type
-        for (name, proxfun, lb, ub) in regularizers:
-
-            # name must be a string
-            assert isinstance(name, str), "Name must be a string"
-
-            # proxfun must exist in operators if given as a string
-            if isinstance(proxfun, str):
-                assert getattr(operators, proxfun, None) is not None, "Could not find " + proxfun + "() in operators.py"
-
-            # lower and upper bounds must be numbers
-            assert isinstance(lb, (int, float)), "Lower bound must be a number"
-            assert isinstance(ub, (int, float)), "Upper bound must be a number"
-
-        # define the meta-objective over the hyperparameters
-        def metaobjective(gammas):
-
-            # clear previous regularizers
-            self.clear_regularizers()
-
-            # concatenate regularizers with gamma values
-            regs = [(reg[0][1], reg[1]) for reg in zip(regularizers, gammas)]
-
-            # add regularizers with the given hyperparameters (given names of functions in operators.py)
-            map(lambda x: self.add_regularizer(x[0], gamma=x[1]), regs)
-
-            # run the minimizer
-            x_hat = self.minimize(theta_init, max_iter=num_iter, disp=2)
-
-            # test on the validation set
-            loss = validation_loss(x_hat)
-
-            return {
-                'loss': loss,
-                'runtime': self.results['runtimes'][-1],
-                'primal_residual': self.results['residuals']['primal'][-1],
-                'dual_residual': self.results['residuals']['dual'][-1],
-                'num_iter': self.results['numiter']
-            }
-
-        # build the search space consisting of loguniform ranges of the given values in the regularizers dictionary
-        searchspace = map(lambda x: hyperopt.hp.loguniform(x[0], x[2], x[3]), regularizers)
-
-        # store results in hyperopt trials object
-        self.hyperopt_trials = hyperopt.Trials()
-
-        # search over different hyperparameters
-        gamma_opt = hyperopt.fmin(metaobjective,
-                                  space=searchspace,
-                                  algo=hyperopt.tpe.suggest,
-                                  max_evals=num_runs,
-                                  trials=self.hyperopt_trials)
-
-        return gamma_opt
