@@ -234,7 +234,7 @@ class Optimizer(object):
         self.theta = theta_avg.reshape(orig_shape)
         return self.theta
 
-    def update_display(self, iteration, disp_level, col_width=12):
+    def update_display(self, iteration, disp_level, col_width=12): # pragma: no cover
         """
         Prints information about the optimization procedure to standard output
 
