@@ -210,9 +210,14 @@ class Optimizer(object):
             self.metadata['Time (s)'].append(time.time() - tstart)
             self.metadata['Momentum'].append(rho)
 
-            # call the callback function with the current parameters and metadata from the last iteration
+            # invoke the callback function with the current parameters and
+            # history
             if callback is not None:
-                callback(theta_avg.reshape(orig_shape), self.metadata.tail(1).irow(0).to_dict())
+
+                # get the metadata from this iteration
+                data = valmap(last, self.metadata)
+
+                callback(theta_avg.reshape(orig_shape), data)
 
             # update the display
             self.update_display(cur_iter + 1, disp)

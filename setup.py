@@ -22,7 +22,7 @@ setup(name='proxalgs',
           'Operating System :: MacOS :: MacOS X',
           'Topic :: Scientific/Engineering :: Information Analysis'],
       packages=['proxalgs'],
-      requires=['numpy', 'scipy', 'tableprint', 'sktensor'],
+      requires=['numpy', 'scipy', 'tableprint'],
       extras_require={
           'dev': ['sphinx', 'sphinx-rtd-theme'],
           'test': ['nose']

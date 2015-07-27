@@ -16,7 +16,6 @@ import numpy as np
 import scipy.optimize as opt
 from scipy.sparse import spdiags
 from scipy.sparse.linalg import spsolve
-from sktensor import dtensor
 from skimage.restoration import denoise_tv_bregman
 from toolz import curry
 from toolz.functoolz import isunary
@@ -165,7 +164,7 @@ def bfgs(x0, rho, f, fgrad):
 
 
 @curry
-def smooth(x0, rho, gamma, mode=None):
+def smooth(x0, rho, gamma):
     """
     Proximal operator for a smoothing function enforced via the discrete laplacian operator
 
@@ -180,11 +179,6 @@ def smooth(x0, rho, gamma, mode=None):
     gamma : float
         A constant that weights how strongly to enforce the constraint
 
-    model : int, optional
-        If None (default), then the input is treated as a numpy array. If an integer, it is
-        treated as a tensor object and the smoothing is applied to the columns of an unfolding of
-        the tensor (using the array axis given by mode).
-
     Returns
     -------
     theta : array_like
@@ -192,27 +186,16 @@ def smooth(x0, rho, gamma, mode=None):
 
     """
 
-    # if tensor, generate unfolded array
-    if mode is not None:
-        x_temp = dtensor(x0).unfold(mode)
-    else:
-        x_temp = x0
-
     # Apply Laplacian smoothing
-    n = x_temp.shape[0]
+    n = x0.shape[0]
     lap_op = spdiags([(2 + rho / gamma) * np.ones(n), -1 * np.ones(n), -1 * np.ones(n)], [0, -1, 1], n, n, format='csc')
-    x_out = spsolve(gamma * lap_op, rho * x_temp)
-
-    if mode is not None:
-        tmp = x_temp.copy()
-        tmp[:, :] = x_out[:, :]
-        x_out = tmp.fold()
+    x_out = spsolve(gamma * lap_op, rho * x0)
 
     return x_out
 
 
 @curry
-def nucnorm(x0, rho, gamma, mode=None):
+def nucnorm(x0, rho, gamma):
     """
     Proximal operator for the nuclear norm (sum of the singular values of a matrix)
 
@@ -227,11 +210,6 @@ def nucnorm(x0, rho, gamma, mode=None):
     gamma : float
         A constant that weights how strongly to enforce the constraint
 
-    model : int, optional
-        If None (default), then the input is treated as a numpy array. If an integer, it is
-        treated as a tensor object and the nuclear norm is applied to an unfolding of
-        the tensor (using the array axis given by mode).
-
     Returns
     -------
     theta : array_like
@@ -239,24 +217,14 @@ def nucnorm(x0, rho, gamma, mode=None):
 
     """
 
-    # if tensor, generate unfolded array
-    if mode is not None:
-        x_temp = dtensor(x0).unfold(mode)
-    else:
-        x_temp = x0
-
     # compute SVD
-    u, s, v = np.linalg.svd(x_temp, full_matrices=False)
+    u, s, v = np.linalg.svd(x0, full_matrices=False)
 
     # soft threshold the singular values
     sthr = np.maximum(s - (gamma / float(rho)), 0)
 
     # reconstruct
     x_out = (u.dot(np.diag(sthr)).dot(v))
-
-    # if tensor, refold
-    if mode is not None:
-        x_out = x_out.fold()
 
     return x_out
 
