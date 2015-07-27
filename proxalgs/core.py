@@ -9,6 +9,7 @@ A proximal consensus optimization algorithm
 import time
 import numpy as np
 from . import operators
+from collections import defaultdict
 import tableprint
 from toolz import last, valmap
 
@@ -44,12 +45,6 @@ class Optimizer(object):
         self.objectives = list()
         self.add_regularizer(objfun, **kwargs)
         self.converged = False
-        self.metadata = {
-            'Primal resid': [],
-            'Dual resid': [],
-            'Time (s)': [],
-            'Momentum': []
-        }
         self.theta = None
 
     def __str__(self):
@@ -178,12 +173,7 @@ class Optimizer(object):
         tstart = time.time()
 
         # clear metadata
-        self.metadata = {
-            'Primal resid': [],
-            'Dual resid': [],
-            'Time (s)': [],
-            'Momentum': []
-        }
+        self.metadata = defaultdict(list)
 
         # run ADMM iterations
         self.converged = False
