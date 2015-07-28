@@ -1,17 +1,11 @@
-import os
 from setuptools import setup, find_packages
 import proxalgs
-
-here = os.path.abspath(os.path.dirname(__file__))
-try:
-    README = open(os.path.join(here, 'README.md')).read()
-except IOError:
-    README = ''
 
 setup(name='proxalgs',
       version=proxalgs.__version__,
       description='Proximal algorithms in python',
-      long_description=README,
+      long_description='''A package for running proximal algorithms for
+                          optimization in python.''',
       author='Niru Maheshwaranathan',
       author_email='nirum@stanford.edu',
       url='https://github.com/ganguli-lab/proxalgs',
