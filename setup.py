@@ -1,7 +1,6 @@
 import os
-from setuptools import setup
-
-version = '0.2.0'
+from setuptools import setup, find_packages
+import proxalgs
 
 here = os.path.abspath(os.path.dirname(__file__))
 try:
@@ -10,7 +9,7 @@ except IOError:
     README = ''
 
 setup(name='proxalgs',
-      version=version,
+      version=proxalgs.__version__,
       description='Proximal algorithms in python',
       long_description=README,
       author='Niru Maheshwaranathan',
@@ -21,10 +20,10 @@ setup(name='proxalgs',
           'Intended Audience :: Science/Research',
           'Operating System :: MacOS :: MacOS X',
           'Topic :: Scientific/Engineering :: Information Analysis'],
-      packages=['proxalgs'],
-      requires=['numpy', 'scipy', 'tableprint'],
+      packages=find_packages(),
+      requires=[i.strip() for i in open("requirements.txt").readlines()],
       extras_require={
           'dev': ['sphinx', 'sphinx-rtd-theme'],
           'test': ['nose']
       },
-)
+    )

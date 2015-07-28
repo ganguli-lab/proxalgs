@@ -9,7 +9,7 @@ A proximal consensus optimization algorithm
 import time
 import numpy as np
 from . import operators
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 import tableprint
 from toolz import last, valmap
 
@@ -27,6 +27,9 @@ class Optimizer(object):
     module (and any additional arguments needed for that function). Then, add any desired regularizers along
     with the necessary hyperparameters for those functions. Finally, use the minimize() function to run
     a proximal consensus algorithm for your problem.
+
+    Here is an example of sparse low-rank matrix approximation applied to
+    a data matrix `x_obs` using the l1 and nuclear norm as regularizers:
 
     >>> opt = Optimizer('squared_error', x_obs=x_obs)
     >>> opt.add_regularizer('sparse', gamma=0.1)
@@ -112,7 +115,7 @@ class Optimizer(object):
         """
         self.objectives = [self.objectives[0]]
 
-    def minimize(self, theta_init, max_iter=50, callback=None, disp=0, mu=10.0, tau_inc=2.0, tau_dec=2.0, tol=1e-3):
+    def minimize(self, theta_init, max_iter=50, callback=None, disp=0, tau=(10., 2., 2.), tol=1e-3):
         """
         Minimize a list of objectives using a proximal consensus algorithm
 
@@ -141,18 +144,12 @@ class Optimizer(object):
 
         Other Parameters
         ----------------
-        mu : int, optional
-            initial value of the momentum term, larger values take smaller steps (default: 10)
-
-        tau_inc : int, optional
-            increment parameter for the momentum scheduler (default: 2)
-
-        tau_dec : int, optional
-            decrement parameter for the momentum scheduler (default: 2)
+        tau : (float, float, float), optional
+            initial, increment and decrement parameters for the momentum scheduler (default: (10, 2, 2))
 
         tol : float, optional
             residual tolerance for assessing convergence. if both the primal and dual residuals are less
-            than this value, then the algorithm has converged
+            than this value, then the algorithm has converged (default: 1e-3)
 
         """
 
@@ -166,8 +163,9 @@ class Optimizer(object):
         duals = [np.zeros(theta_init.size) for _ in range(num_obj)]
         theta_avg = np.mean(primals, axis=0).ravel()
 
-        # penalty parameter
-        rho = mu
+        # initialize penalty parameter
+        tau = namedtuple('tau', ('init', 'inc', 'dec'))(*tau)
+        rho = tau.init
 
         # store cumulative runtimes of each iteration, starting now
         tstart = time.time()
@@ -199,10 +197,10 @@ class Optimizer(object):
 
             # update penalty parameter according to primal and dual residuals
             # (see sect. 3.4.1 of the Boyd and Parikh ADMM paper)
-            if primal_resid > mu * dual_resid:
-                rho *= float(tau_inc)
-            elif dual_resid > mu * primal_resid:
-                rho /= float(tau_dec)
+            if primal_resid > tau.init * dual_resid:
+                rho *= float(tau.inc)
+            elif dual_resid > tau.init * primal_resid:
+                rho /= float(tau.dec)
 
             # update metadata for this iteration
             self.metadata['Primal resid'].append(primal_resid)
