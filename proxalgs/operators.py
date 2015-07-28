@@ -19,23 +19,6 @@ from scipy.sparse.linalg import spsolve
 from skimage.restoration import denoise_tv_bregman
 from toolz import curry
 from toolz.functoolz import isunary
-from descent import algorithms
-
-
-@curry
-def gdm(x0, rho, df=None, eta=1e-2, mu=0, numsteps=100):
-    """
-    Proximal operator via gradient descent with momentum
-    """
-
-    assert isunary(df), "Invalid gradient function (must be unary)"
-
-    grad = lambda x: df(x) + rho * (x - x0)
-    opt = algorithms.gdm(grad, x0, eta=eta, mu=mu)
-    for _ in range(numsteps):
-        xk = next(opt)
-
-    return xk
 
 
 @curry
