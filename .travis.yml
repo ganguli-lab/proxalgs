@@ -6,7 +6,14 @@ python:
   - "3.4"
 
 # command to install dependencies
-install: "pip install -r requirements.txt"
+install:
+  - pip install -r requirements.txt --use-mirrors
+  - pip install coveralls
 
 # command to run tests
-script: nosetests
+script:
+  - python setup.py install
+  - nosetests --with-coverage --cover-package=proxalgs
+
+after_success:
+  - coveralls
