@@ -284,4 +284,4 @@ class Optimizer(object):
 
             # print convergence statement
             if iteration == -1 and self.converged:
-                print('Converged after %i iterations!' % len(self.metadata.values()[0]))
+                print('Converged after %i iterations!' % len(self.metadata['Primal resid']))
