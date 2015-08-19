@@ -16,9 +16,7 @@ import numpy as np
 import scipy.optimize as opt
 from scipy.sparse import spdiags
 from scipy.sparse.linalg import spsolve
-from skimage.restoration import denoise_tv_bregman
 from toolz import curry
-from toolz.functoolz import isunary
 
 
 @curry
@@ -266,6 +264,11 @@ def tvd(x0, rho, gamma):
         If scikit-image fails to be imported
 
     """
+    try:
+        from skimage.restoration import denoise_tv_bregman
+    except ImportError:
+        print('Error: scikit-image not found. TVD will not work.')
+        return x0
 
     return denoise_tv_bregman(x0, rho / gamma)
 

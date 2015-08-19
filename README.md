@@ -17,7 +17,6 @@ Required:
 - numpy
 - scipy
 - toolz
-- scikit-tensor
 
 Optional:
 - scikit-image
