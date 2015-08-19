@@ -22,7 +22,6 @@ Required:
 Optional:
 - scikit-image
 - tableprint
-- descent
 
 ## Development
 Pull requests welcome! Please stick to the [NumPy/SciPy documentation standards](https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard)
