@@ -131,16 +131,13 @@ class Optimizer(object):
             a function that gets called on each iteration with the following arguments: the current parameter
             value (ndarray), and a dictionary that contains a information about the status of the algorithm
 
-        disp : integer, optional
+        disp : int, optional
             determines how much information to display when running. Ranges from 0 (nothing) to 3 (lots of information)
 
         Returns
         -------
         theta : ndarray
             The parameters found after running the optimization procedure
-
-        res : dict
-            A dictionary containing results and other information about convergence of the algorithm
 
         Other Parameters
         ----------------
@@ -276,8 +273,7 @@ class Optimizer(object):
                     print(hr)
 
                 # print data
-                tabledata = map(float, [np.array(data[key]) for key in keys])
-                print(tableprint.row(tabledata, column_width=col_width, precision='4g'))
+                print(tableprint.row(data.values(), column_width=col_width, precision='4g'))
 
                 if iteration == -1:
                     print(tableprint.hr(len(keys), column_width=col_width) + '\n')
