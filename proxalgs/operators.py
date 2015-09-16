@@ -13,344 +13,241 @@ evaluates expressions of the form:
 
 # imports
 import numpy as np
-import scipy.optimize as opt
+from scipy.optimize import minimize
 from scipy.sparse import spdiags
 from scipy.sparse.linalg import spsolve
-from toolz import curry
+from .tensor import Tensor
 
+# python 2/3 compatibility
+import sys
+if sys.version_info < (3,0):
+    from builtins import super
 
-@curry
-def sfo(x0, rho, optimizer, num_steps=50):
-    """
-    Proximal operator for an arbitrary function minimized via the Sum-of-Functions optimizer (SFO)
 
-    Notes
-    -----
-    SFO is a function optimizer for the
-    case where the target function breaks into a sum over minibatches, or a sum
-    over contributing functions. It is
-    described in more detail in [1]_.
+def tensor_wrapper(axis):
+    def decorate(func):
+        def wrapper(x, *args, **kwargs):
+            xu = Tensor(x).unfold(axis)
+            return func(xu, *args, **kwargs).fold()
+        return wrapper
+    return decorate
 
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
 
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
+class Operator(object):
 
-    optimizer : SFO instance
-        Instance of the SFO object in `SFO_admm.py`
+    def __init__(self, penalty):
+        # TODO: deal with None
+        self.penalty = penalty #float(penalty)
 
-    num_steps : int, optional
-        Number of SFO steps to take
+    def __str__(self):
+        # TODO: check for name and penalty
+        return '{} proximal operator (penalty = {})'.format(self.name, self.penalty)
 
-    Returns
-    -------
-    theta : array_like
-    The parameter vector found after running `num_steps` iterations of the SFO optimizer
+    def __call__(x0, rho):
+        raise NotImplementedError
 
-    References
-    ----------
-    .. [1] Jascha Sohl-Dickstein, Ben Poole, and Surya Ganguli. Fast large-scale optimization by unifying stochastic
-        gradient and quasi-Newton methods. International Conference on Machine Learning (2014). `arXiv preprint
-        arXiv:1311.2115 (2013) <http://arxiv.org/abs/1311.2115>`_.
 
-    """
+class sfo(Operator):
 
-    # set the current parameter value of SFO to the given value
-    optimizer.set_theta(x0, float(rho))
+    def __init__(self, optimizer, num_steps=50):
+        """
+        Proximal operator for an arbitrary function minimized via the Sum-of-Functions optimizer (SFO)
 
-    # set the previous ADMM location as the flattened paramter array
-    optimizer.theta_admm_prev = optimizer.theta_original_to_flat(x0)
+        Notes
+        -----
+        SFO is a function optimizer for the
+        case where the target function breaks into a sum over minibatches, or a sum
+        over contributing functions. It is
+        described in more detail in [1]_.
 
-    # run the optimizer for n steps
-    return optimizer.optimize(num_steps=num_steps)
+        Parameters
+        ----------
+        x0 : array_like
+            The starting or initial point used in the proximal update step
 
+        rho : float
+            Momentum parameter for the proximal step (larger value -> stays closer to x0)
 
-@curry
-def poissreg(x0, rho, x, y):
-    """
-    Proximal operator for Poisson regression
+        optimizer : SFO instance
+            Instance of the SFO object in `SFO_admm.py`
 
-    Computes the proximal operator of the negative log-likelihood loss assumping a Poisson noise distribution.
+        num_steps : int, optional
+            Number of SFO steps to take
 
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
+        Returns
+        -------
+        theta : array_like
+        The parameter vector found after running `num_steps` iterations of the SFO optimizer
 
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
+        References
+        ----------
+        .. [1] Jascha Sohl-Dickstein, Ben Poole, and Surya Ganguli. Fast large-scale optimization by unifying stochastic
+            gradient and quasi-Newton methods. International Conference on Machine Learning (2014). `arXiv preprint
+            arXiv:1311.2115 (2013) <http://arxiv.org/abs/1311.2115>`_.
 
-    x : (n, k) array_like
-        A design matrix consisting of n examples of k-dimensional features (or input).
+        """
 
-    y : (n,) array_like
-        A vector containing the responses (outupt) to the n features given in x.
+        self.name = 'SFO'
+        self.optimizer = optimizer
+        super().__init__(None)
 
-    Returns
-    -------
-    theta : array_like
-        The parameter vector found after running the proximal update step
+    def __call__(self, x0, rho):
 
+        # set the current parameter value of SFO to the given value
+        self.optimizer.set_theta(x0, float(rho))
 
-    """
+        # set the previous ADMM location as the flattened paramter array
+        self.optimizer.theta_admm_prev = self.optimizer.theta_original_to_flat(x0)
 
-    # objective and gradient
-    n = float(x.shape[0])
-    f = lambda w: np.mean(np.exp(x.dot(w)) - y * x.dot(w))
-    df = lambda w: (x.T.dot(np.exp(x.dot(w))) - x.T.dot(y)) / n
+        # run the optimizer for n steps
+        return self.optimizer.optimize(num_steps=self.num_steps)
 
-    # minimize via BFGS
-    return bfgs(x0, rho, f, df)
 
+class poissreg(Operator):
 
-@curry
-def bfgs(x0, rho, f, fgrad):
-    """
-    Proximal operator for minimizing an arbitrary function using BFGS
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.n = float(x.shape[0])
+        self.proj = x.T.dot(y)
 
-    Uses the BFGS algorithm to find the proximal update for an arbitrary function, `f`, whose gradient is known.
+    def f_df(self, w):
 
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
+        u = self.x.dot(w)
+        r = np.exp(u)
 
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
+        obj = np.mean(r - self.y * u)
+        grad = (self.x.T.dot(r) - self.proj) / self.n
+        return obj, grad
 
-    f : function
-        The function to use when applying the proximal operator. Must take as input a parameter vector (array_like) and
-        return a real number (floating point value)
+    def __call__(self, x0, rho):
 
-    df : function
-        A function that computes the gradient of `f` with respect to the parameters. Must take as input a parameter
-        vector (array_like) and returns another ndarray of the same size.
+        raise NotImplementedError
 
-    Returns
-    -------
-    theta : array_like
-        The parameter vector found after running the proximal update step
 
-    """
+class bfgs(Operator):
 
-    # specify the objective function and gradient for the proximal operator
-    g = lambda x: f(x) + (rho / 2) * np.sum((x.reshape(x0.shape) - x0) ** 2)
-    dg = lambda x: fgrad(x) + rho * (x.reshape(x0.shape) - x0)
+    def __init__(self, f_df, method='BFGS', maxiter=50, disp=False):
+        self.name = 'Custom objective with BFGS'
+        self.f_df = f_df
+        self.opts = {'maxiter': maxiter, 'disp': disp}
+        super().__init__(None)
 
-    # minimize via BFGS
-    return opt.fmin_bfgs(g, x0, dg, disp=False)
+    def build_objective(self, x0, rho):
 
+        def wrapper(x):
+            f, df = self.f_df(x)
 
-@curry
-def smooth(x0, rho, gamma):
-    """
-    Proximal operator for a smoothing function enforced via the discrete laplacian operator
+            xdiff = x.reshape(x0.shape) - x0
+            obj = f + (rho / 2) * np.sum(xdiff ** 2)
+            grad = df + rho * xdiff
 
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
+            return obj, grad
 
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
+        return wrapper
 
-    gamma : float
-        A constant that weights how strongly to enforce the constraint
+    def __call__(self, x0, rho):
 
-    Returns
-    -------
-    theta : array_like
-        The parameter vector found after running the proximal update step
+        # specify the objective function and gradient for the proximal operator
+        obj = self.build_objective(x0, rho)
 
-    """
+        # minimize via BFGS
+        res = minimize(obj, x0, method='BFGS', jac=True, options=self.opts)
+        return res.x
 
-    # Apply Laplacian smoothing
-    n = x0.shape[0]
-    lap_op = spdiags([(2 + rho / gamma) * np.ones(n), -1 * np.ones(n), -1 * np.ones(n)], [0, -1, 1], n, n, format='csc')
-    x_out = spsolve(gamma * lap_op, rho * x0)
 
-    return x_out
+class smooth(Operator):
 
+    def __init__(self, penalty):
+        self.name = 'Smooth'
+        super().__init__(penalty)
 
-@curry
-def nucnorm(x0, rho, gamma):
-    """
-    Proximal operator for the nuclear norm (sum of the singular values of a matrix)
+    def __call__(self, x0, rho):
 
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
+        # Apply Laplacian smoothing
+        n = x0.shape[0]
+        lap_op = spdiags([(2 + rho / self.penalty) * np.ones(n), -1 * np.ones(n),
+                          -1 * np.ones(n)], [0, -1, 1], n, n, format='csc')
+        x_out = spsolve(self.penalty * lap_op, rho * x0)
 
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
+        return x_out
 
-    gamma : float
-        A constant that weights how strongly to enforce the constraint
 
-    Returns
-    -------
-    theta : array_like
-        The parameter vector found after running the proximal update step
+class nucnorm(Operator):
 
-    """
+    def __init__(self, penalty):
+        self.name = 'Nuclear norm'
+        super().__init__(penalty)
 
-    # compute SVD
-    u, s, v = np.linalg.svd(x0, full_matrices=False)
+    def __call__(self, x0, rho):
 
-    # soft threshold the singular values
-    sthr = np.maximum(s - (gamma / float(rho)), 0)
+        # compute SVD
+        u, s, v = np.linalg.svd(x0, full_matrices=False)
 
-    # reconstruct
-    x_out = (u.dot(np.diag(sthr)).dot(v))
+        # soft threshold the singular values
+        sthr = np.maximum(s - (self.penalty / float(rho)), 0)
 
-    return x_out
+        # reconstruct
+        return u.dot(np.diag(sthr)).dot(v)
 
 
-@curry
-def squared_error(x0, rho, x_obs):
-    """
-    Proximal operator for the pairwise difference between two matrices (Frobenius norm)
+class squared_error(Operator):
 
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
+    def __init__(self, x_obs):
+        self.name = 'Squared error'
+        self.x_obs = x_obs
+        super().__init__(None)
 
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
+    def __call__(self, x0, rho):
+        return (x0 + self.x_obs / rho) / (1 + 1 / rho)
 
-    x_obs : array_like
-        The true matrix that we want to approximate. The error between the parameters and this matrix is minimized.
 
-    Returns
-    -------
-    x0 : array_like
-        The parameter vector found after running the proximal update step
+class tvd(Operator):
 
-    """
-    return (x0 + x_obs / rho) / (1 + 1 / rho)
+    def __init__(self, penalty):
+        self.name = 'Total variation denoising'
+        super().__init__(penalty)
 
+    def __call__(self, x0, rho):
 
-@curry
-def tvd(x0, rho, gamma):
-    """
-    Proximal operator for the total variation denoising penalty
+        try:
+            from skimage.restoration import denoise_tv_bregman
+        except ImportError:
+            print('Error: scikit-image not found. TVD will not work.')
+            return x0
 
-    Requires scikit-image be installed
+        return denoise_tv_bregman(x0, rho / self.penalty)
 
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
 
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
+class sparse(Operator):
 
-    gamma : float
-        A constant that weights how strongly to enforce the constraint
+    def __init__(self, penalty):
+        self.name = 'Sparse'
+        super().__init__(penalty)
 
-    Returns
-    -------
-    theta : array_like
-        The parameter vector found after running the proximal update step
+    def __call__(self, x0, rho):
+        lmbda = float(self.penalty) / rho
+        return (x0 - lmbda) * (x0 >= lmbda) + (x0 + lmbda) * (x0 <= -lmbda)
 
-    Raises
-    ------
-    ImportError
-        If scikit-image fails to be imported
 
-    """
-    try:
-        from skimage.restoration import denoise_tv_bregman
-    except ImportError:
-        print('Error: scikit-image not found. TVD will not work.')
-        return x0
+class nonneg(Operator):
 
-    return denoise_tv_bregman(x0, rho / gamma)
+    def __init__(self):
+        self.name = 'Non-negative'
+        super().__init__(None)
 
+    def __call__(self, x0, rho):
+        return np.maximum(x0, 0)
 
-@curry
-def sparse(x0, rho, gamma):
-    """
-    Proximal operator for the l1 norm (induces sparsity)
 
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
+class linsys(Operator):
 
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
+    def __init__(self, P, q):
+        self.name = 'Quadratic'
+        self.P = P
+        self.q = q
+        super().__init__(None)
 
-    gamma : float
-        A constant that weights how strongly to enforce the constraint
-
-    Returns
-    -------
-    theta : array_like
-        The parameter vector found after running the proximal update step
-
-    """
-
-    lmbda = float(gamma) / rho
-
-    return (x0 - lmbda) * (x0 >= lmbda) + (x0 + lmbda) * (x0 <= -lmbda)
-
-
-@curry
-def nonneg(x0, rho):
-    """
-    Proximal operator for enforcing non-negativity (indicator function over the set x >= 0)
-
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
-
-    rho : float
-        Unused parameter
-
-    Returns
-    -------
-    theta : array_like
-        The parameter vector found after running the proximal update step
-
-    """
-
-    return np.maximum(x0, 0)
-
-
-@curry
-def linsys(x0, rho, P, q):
-    """
-    Proximal operator for the linear approximation Ax = b
-
-    Minimizes the function:
-
-    .. math:: f(x) = (1/2)||Ax-b||_2^2 = (1/2)x^TA^TAx - (b^TA)x + b^Tb
-
-    Parameters
-    ----------
-    x0 : array_like
-        The starting or initial point used in the proximal update step
-
-    rho : float
-        Momentum parameter for the proximal step (larger value -> stays closer to x0)
-
-    P : array_like
-        The symmetric matrix A^TA, where we are trying to approximate Ax=b
-
-    q : array_like
-        The vector A^Tb, where we are trying to approximate Ax=b
-
-    Returns
-    -------
-    theta : array_like
-        The parameter vector found after running the proximal update step
-
-    """
-    return np.linalg.solve(rho * np.eye(q.size) + P, rho * x0.copy() + q)
+    def __call__(self, x0, rho):
+        return np.linalg.solve(rho * np.eye(self.q.size) + self.P,
+                               rho * x0.copy() + self.q)

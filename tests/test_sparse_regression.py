@@ -41,7 +41,7 @@ def test_sparse_regression():
 
     # proximal algorithm for sparse regression
     opt = Optimizer('linsys', P=A.T.dot(A), q=A.T.dot(x_obs))
-    opt.add_regularizer('sparse', gamma=1)
+    opt.add_regularizer('sparse', 1.)
     x_hat = opt.minimize(xls, max_iter=100)
 
     test_err = np.linalg.norm(x_hat - x_true, 2)

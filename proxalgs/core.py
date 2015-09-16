@@ -53,7 +53,7 @@ class Optimizer(object):
     def __str__(self):
         return "Optimizer object with %i objectives." % len(self.objectives)
 
-    def add_regularizer(self, proxfun, **kwargs):
+    def add_regularizer(self, proxfun, *args, **kwargs):
         """
         Add a regularizer from the operators module to the list of objectives
 
@@ -72,14 +72,14 @@ class Optimizer(object):
         # if proxfun is a string, grab the corresponding function from operators.py
         if isinstance(proxfun, str):
             try:
-                self.objectives.append(lambda theta, rho: getattr(operators, proxfun)(theta.copy(), float(rho), **kwargs))
+                self.objectives.append(getattr(operators, proxfun)(*args, **kwargs))
 
             except AttributeError as e:
                 print(str(e) + '\n' + 'Could not find the function ' + proxfun + ' in the operators module!')
 
         # if proxfun is a function, add it as its own proximal operator
         elif hasattr(proxfun, '__call__'):
-            self.objectives.append(lambda theta, rho: proxfun(theta.copy(), float(rho)))
+            self.objectives.append(proxfun)
 
         # type of proxfun must be a string or a function
         else:
