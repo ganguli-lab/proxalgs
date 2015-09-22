@@ -13,10 +13,26 @@ evaluates expressions of the form:
 
 # imports
 import numpy as np
+import descent as descent_module
 import scipy.optimize as opt
 from scipy.sparse import spdiags
 from scipy.sparse.linalg import spsolve
 from toolz import curry
+
+
+@curry
+def descent(x0, rho, f_df, maxiter=100, eta=0.5):
+
+    # f_df wrapper
+    def f_df_wrapper(x):
+        f, df = f_df(x)
+
+        xdiff = x.reshape(x0.shape) - x0
+        obj = f + (rho / 2) * np.sum(xdiff ** 2)
+        grad = df + rho * xdiff
+        return obj, grad
+
+    return descent_module.optimize(descent_module.rmsprop(lr=eta), f_df_wrapper, x0, maxiter=maxiter)
 
 
 @curry
