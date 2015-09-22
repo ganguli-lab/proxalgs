@@ -13,12 +13,15 @@ evaluates expressions of the form:
 
 # imports
 import numpy as np
-import descent as descent_module
 import scipy.optimize as opt
 from scipy.sparse import spdiags
 from scipy.sparse.linalg import spsolve
 from toolz import curry
 
+try:
+    import descent as descent_module
+except ImportError:
+    print('need to install descent: github.com/nirum/descent')
 
 @curry
 def descent(x0, rho, f_df, maxiter=100, eta=0.5):
