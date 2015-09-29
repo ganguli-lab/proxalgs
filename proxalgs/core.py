@@ -273,7 +273,7 @@ class Optimizer(object):
                     print(hr)
 
                 # print data
-                print(tableprint.row(data.values(), column_width=col_width, precision='4g'))
+                print(tableprint.row(data.values(), column_width=col_width, format_spec='4g'))
 
                 if iteration == -1:
                     print(tableprint.hr(len(keys), column_width=col_width) + '\n')
