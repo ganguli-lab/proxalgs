@@ -164,9 +164,13 @@ def bfgs(x0, rho, f, fgrad):
 
 
 @curry
-def smooth(x0, rho, gamma):
+def smooth(x0, rho, gamma, axis=0):
     """
     Proximal operator for a smoothing function enforced via the discrete laplacian operator
+
+    Notes
+    -----
+    Currently only works with matrices (2-D arrays) as input
 
     Parameters
     ----------
@@ -187,9 +191,9 @@ def smooth(x0, rho, gamma):
     """
 
     # Apply Laplacian smoothing
-    n = x0.shape[0]
+    n = x0.shape[axis]
     lap_op = spdiags([(2 + rho / gamma) * np.ones(n), -1 * np.ones(n), -1 * np.ones(n)], [0, -1, 1], n, n, format='csc')
-    x_out = spsolve(gamma * lap_op, rho * x0)
+    x_out = np.rollaxis(spsolve(gamma * lap_op, rho * np.rollaxis(x0, axis, 0)), axis, 0)
 
     return x_out
 
