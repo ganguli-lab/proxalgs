@@ -16,3 +16,5 @@ __author__ = 'nirum'
 __all__ = ['core', 'operators', 'tensor']
 
 from .core import Optimizer
+from .operators import *
+from .tensor import *
