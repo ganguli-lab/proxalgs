@@ -7,8 +7,9 @@ tensor unfolding
 """
 
 import numpy as np
+from .operators import squared_error
 
-__all__ = ['Tensor', 'UnfoldedTensor']
+__all__ = ['Tensor', 'UnfoldedTensor', 'susvd']
 
 
 class Tensor(np.ndarray):
@@ -68,3 +69,34 @@ class UnfoldedTensor(np.ndarray):
 def pullax(values, idx):
     values.insert(0, values.pop(idx))
     return tuple(values)
+
+
+def susvd(x, x_obs, rho, penalties):
+    """
+    Sequential unfolding SVD
+
+    Parameters
+    ----------
+    x : Tensor
+
+    x_obs : array_like
+
+    rho : float
+
+    penalties : array_like
+        penalty for each unfolding of the input tensor
+
+    """
+
+    assert type(x) == Tensor, "Input array must be a Tensor"
+
+    while True:
+
+        # proximal operator for the Fro. norm
+        x = squared_error(x, rho, x_obs)
+
+        # sequential singular value thresholding
+        for ix, penalty in enumerate(penalties):
+            x = x.unfold(ix).svt(penalty / rho).fold()
+
+        yield x
