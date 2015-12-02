@@ -267,10 +267,7 @@ class Optimizer(object):
 
                 # initial update. print out table headers
                 if iteration == 1:
-                    hr = tableprint.hr(len(keys), column_width=col_width)
-                    print('\n' + hr)
                     print(tableprint.header(keys, column_width=col_width))
-                    print(hr)
 
                 # print data
                 print(tableprint.row(data.values(), column_width=col_width, format_spec='4g'))
