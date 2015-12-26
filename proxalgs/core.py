@@ -203,7 +203,7 @@ class Optimizer(object):
             self.metadata['Primal resid'].append(primal_resid)
             self.metadata['Dual resid'].append(dual_resid)
             self.metadata['Time (s)'].append(time.time() - tstart)
-            self.metadata['Momentum'].append(rho)
+            self.metadata['rho'].append(rho)
 
             # invoke the callback function with the current parameters and
             # history
@@ -263,14 +263,16 @@ class Optimizer(object):
                 data = valmap(last, self.metadata)
 
                 # choose what keys to use
-                keys = ['Time (s)', 'Primal resid', 'Dual resid', 'Momentum']
+                keys = ['Time (s)', 'Primal resid', 'Dual resid', 'rho']
 
                 # initial update. print out table headers
                 if iteration == 1:
                     print(tableprint.header(keys, column_width=col_width))
 
                 # print data
-                print(tableprint.row(data.values(), column_width=col_width, format_spec='4g'))
+                print(tableprint.row([data[k] for k in keys],
+                                     column_width=col_width,
+                                     format_spec='4g'))
 
                 if iteration == -1:
                     print(tableprint.hr(len(keys), column_width=col_width) + '\n')
