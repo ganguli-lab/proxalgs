@@ -23,19 +23,27 @@ try:
 except ImportError:
     print('need to install descent: github.com/nirum/descent')
 
+
 @curry
 def descent(x0, rho, f_df, maxiter=100, eta=0.5):
 
     # f_df wrapper
     def f_df_wrapper(x):
+        """
+        x : array_like
+
+        """
         f, df = f_df(x)
 
-        xdiff = x.reshape(x0.shape) - x0
+        xdiff = x - x0
         obj = f + (rho / 2) * np.sum(xdiff ** 2)
         grad = df + rho * xdiff
         return obj, grad
 
-    return descent_module.optimize(descent_module.rmsprop(lr=eta), f_df_wrapper, x0, maxiter=maxiter)
+    opt = descent_module.GradientDescent(x0, f_df_wrapper, 'adam', {'lr': eta})
+    opt.run(maxiter=maxiter)
+
+    return opt.theta
 
 
 @curry
