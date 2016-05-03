@@ -267,15 +267,13 @@ class Optimizer(object):
 
                 # initial update. print out table headers
                 if iteration == 1:
-                    print(tableprint.header(keys, column_width=col_width))
+                    print(tableprint.header(keys, width=col_width))
 
                 # print data
-                print(tableprint.row([data[k] for k in keys],
-                                     column_width=col_width,
-                                     format_spec='4g'))
+                print(tableprint.row([data[k] for k in keys], width=col_width, format_spec='4g'))
 
                 if iteration == -1:
-                    print(tableprint.hr(len(keys), column_width=col_width) + '\n')
+                    print(tableprint.bottom(len(keys), width=col_width) + '\n')
 
             # print convergence statement
             if iteration == -1 and self.converged:
