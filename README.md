@@ -17,7 +17,9 @@ Proxalgs is a package for performing convex optimization in python.
 
 Example code for solving l1-regularized least-squares:
 ```python
->>> opt = Optimizer('squared_error', x_obs=x_obs)
->>> opt.add_regularizer('sparse', gamma=0.1)
->>> x_hat = opt.minimize(x_init)
+>>> from proxalgs import Optimizer
+>>> # we want to solve: min ||Ax - b||_2^2 + \gamma ||x||_1
+>>> opt = Optimizer('linsys', P=(A.T @ A), q=(A.T @ b))       # main objective (least squares linear system)
+>>> opt.add_regularizer('sparse', gamma=0.1)                  # regularizer (l1-norm) with penalty of 0.1
+>>> x_hat = opt.minimize(x_init)                              # x_init can be any initialization (e.g. random)
 ```
