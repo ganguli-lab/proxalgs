@@ -8,7 +8,7 @@ test:
 	py.test -v --cov=proxalgs --cov-report=html tests
 
 lint:
-	flake8 descent/
+	flake8 proxalgs/
 
 clean:
 	rm -rf htmlcov/
