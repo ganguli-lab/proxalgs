@@ -1,11 +1,6 @@
 """
-Tensor
-------
-
-tensor unfolding
-
+Tensors
 """
-
 import numpy as np
 from .operators import squared_error
 
@@ -85,7 +80,6 @@ def susvd(x, x_obs, rho, penalties):
 
     penalties : array_like
         penalty for each unfolding of the input tensor
-
     """
 
     assert type(x) == Tensor, "Input array must be a Tensor"

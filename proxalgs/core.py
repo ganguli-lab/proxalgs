@@ -1,17 +1,20 @@
 """
 Proximal algorithms
+-------------------
 
 A proximal consensus optimization algorithm
-
 """
 
 # imports
 import time
-import numpy as np
-from . import operators
 from collections import defaultdict, namedtuple
-import tableprint
+
+import numpy as np
 from toolz import last, valmap
+
+import tableprint
+
+from . import operators
 
 # exports
 __all__ = ['Optimizer']
@@ -109,10 +112,7 @@ class Optimizer(object):
               for proxfun in regularizers.keys()])
 
     def clear(self):
-        """
-        Clear any added regularizers (only retains the first objective)
-
-        """
+        """Clear any added regularizers (only retains the first objective)"""
         self.objectives = [self.objectives[0]]
 
     def minimize(self, theta_init, max_iter=50, callback=None, disp=0, tau=(10., 2., 2.), tol=1e-3):
@@ -147,7 +147,6 @@ class Optimizer(object):
         tol : float, optional
             residual tolerance for assessing convergence. if both the primal and dual residuals are less
             than this value, then the algorithm has converged (default: 1e-3)
-
         """
 
         # get list of objectives for this parameter
@@ -229,7 +228,7 @@ class Optimizer(object):
         self.theta = theta_avg.reshape(orig_shape)
         return self.theta
 
-    def update_display(self, iteration, disp_level, col_width=12): # pragma: no cover
+    def update_display(self, iteration, disp_level, col_width=12):  # pragma: no cover
         """
         Prints information about the optimization procedure to standard output
 
@@ -243,7 +242,6 @@ class Optimizer(object):
 
         col_width : int
             The width of each column in the data table, used if disp_level > 1
-
         """
 
         # exit and print nothing if disp_level is zero

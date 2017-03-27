@@ -8,10 +8,7 @@ Notes
 evaluates expressions of the form:
 
 .. math:: \mathrm{prox}_{f,rho} (x0) = \mathrm{argmin}_x ( f(x) + (rho / 2) ||x-x0||_2^2 )
-
 """
-
-# imports
 import numpy as np
 import scipy.optimize as opt
 from scipy.sparse import spdiags
@@ -27,12 +24,7 @@ except ImportError:
 @curry
 def descent(x0, rho, f_df, maxiter=100, eta=0.5):
 
-    # f_df wrapper
     def f_df_wrapper(x):
-        """
-        x : array_like
-
-        """
         f, df = f_df(x)
 
         xdiff = x - x0
@@ -82,7 +74,6 @@ def sfo(x0, rho, optimizer, num_steps=50):
     .. [1] Jascha Sohl-Dickstein, Ben Poole, and Surya Ganguli. Fast large-scale optimization by unifying stochastic
         gradient and quasi-Newton methods. International Conference on Machine Learning (2014). `arXiv preprint
         arXiv:1311.2115 (2013) <http://arxiv.org/abs/1311.2115>`_.
-
     """
 
     # set the current parameter value of SFO to the given value
@@ -120,8 +111,6 @@ def poissreg(x0, rho, x, y):
     -------
     theta : array_like
         The parameter vector found after running the proximal update step
-
-
     """
 
     # objective and gradient
@@ -161,7 +150,6 @@ def bfgs(x0, rho, f_df, maxiter=50, method='BFGS'):
     -------
     theta : array_like
         The parameter vector found after running the proximal update step
-
     """
 
     # keep track of the original shape
@@ -212,7 +200,6 @@ def smooth(x0, rho, gamma, axis=0):
     -------
     theta : array_like
         The parameter vector found after running the proximal update step
-
     """
 
     # Apply Laplacian smoothing
@@ -243,7 +230,6 @@ def nucnorm(x0, rho, gamma):
     -------
     theta : array_like
         The parameter vector found after running the proximal update step
-
     """
 
     # compute SVD
@@ -278,7 +264,6 @@ def squared_error(x0, rho, x_obs):
     -------
     x0 : array_like
         The parameter vector found after running the proximal update step
-
     """
     return (x0 + x_obs / rho) / (1 + 1 / rho)
 
@@ -310,7 +295,6 @@ def tvd(x0, rho, gamma):
     ------
     ImportError
         If scikit-image fails to be imported
-
     """
     try:
         from skimage.restoration import denoise_tv_bregman
@@ -341,7 +325,6 @@ def sparse(x0, rho, gamma):
     -------
     theta : array_like
         The parameter vector found after running the proximal update step
-
     """
 
     lmbda = float(gamma) / rho
@@ -366,7 +349,6 @@ def nonneg(x0, rho):
     -------
     theta : array_like
         The parameter vector found after running the proximal update step
-
     """
 
     return np.maximum(x0, 0)
@@ -399,6 +381,5 @@ def linsys(x0, rho, P, q):
     -------
     theta : array_like
         The parameter vector found after running the proximal update step
-
     """
     return np.linalg.solve(rho * np.eye(q.size) + P, rho * x0.copy() + q)
