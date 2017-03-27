@@ -1,33 +1,23 @@
-# Proximal Algorithms
-
+## Proximal Algorithms
 Proximal algorithms and operators in python
 
 [![Build Status](https://travis-ci.org/ganguli-lab/proxalgs.svg?branch=master)](https://travis-ci.org/ganguli-lab/proxalgs)
 [![Coverage Status](https://coveralls.io/repos/ganguli-lab/proxalgs/badge.svg?branch=master&service=github)](https://coveralls.io/github/ganguli-lab/proxalgs?branch=master)
+![PyPI](https://img.shields.io/pypi/v/proxalgs.svg)
+
+by [Niru Maheswaranathan](http://niru.org/) :soccer:
 
 ## Installation
 ```bash
-git clone git@github.com:ganguli-lab/proxalgs.git
-cd proxalgs
-pip install -r requirements.txt
-python setup.py install
+pip install proxalgs
 ```
 
-## Dependencies
+## Overview
+Proxalgs is a package for performing convex optimization in python.
 
-Required:
-- python 2.7 or higher
-- numpy
-- scipy
-- toolz
-
-Optional:
-- scikit-image
-- tableprint
-
-## Development
-Pull requests welcome! Please stick to the [NumPy/SciPy documentation standards](https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard)
-We use `sphinx` for documentation and `nose` for testing.
-
-## Contact
-Niru Maheswaranathan (nirum@stanford.edu)
+Example code for solving l1-regularized least-squares:
+```python
+>>> opt = Optimizer('squared_error', x_obs=x_obs)
+>>> opt.add_regularizer('sparse', gamma=0.1)
+>>> x_hat = opt.minimize(x_init)
+```
