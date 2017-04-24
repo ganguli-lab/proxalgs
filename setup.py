@@ -1,5 +1,9 @@
+import os
 from setuptools import setup, find_packages
 import proxalgs
+
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
 
 setup(
     name='proxalgs',
@@ -15,7 +19,7 @@ setup(
         'Operating System :: MacOS :: MacOS X',
         'Topic :: Scientific/Engineering :: Information Analysis'],
     packages=find_packages(),
-    requires=[i.strip() for i in open("requirements.txt").readlines()],
+    install_requires=required,
     extras_require={
         'dev': ['sphinx', 'sphinx-rtd-theme'],
         'test': ['nose']
