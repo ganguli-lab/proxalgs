@@ -75,7 +75,10 @@ class Optimizer(object):
         # if proxfun is a string, grab the corresponding function from operators.py
         if isinstance(proxfun, str):
             try:
-                self.objectives.append(lambda theta, rho: getattr(operators, proxfun)(theta.copy(), float(rho), **kwargs))
+                proxfun_name = proxfun.split(None, 1)[0]
+                # Ignore everything after white space
+                op = getattr(operators, proxfun_name)
+                self.objectives.append(lambda theta, rho: op(theta.copy(), float(rho), **kwargs))
 
             except AttributeError as e:
                 print(str(e) + '\n' + 'Could not find the function ' + proxfun + ' in the operators module!')
