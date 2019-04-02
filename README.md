@@ -5,8 +5,6 @@ Proximal algorithms and operators in python
 [![Coverage Status](https://coveralls.io/repos/ganguli-lab/proxalgs/badge.svg?branch=master&service=github)](https://coveralls.io/github/ganguli-lab/proxalgs?branch=master)
 ![PyPI](https://img.shields.io/pypi/v/proxalgs.svg)
 
-by [Niru Maheswaranathan](http://niru.org/) :soccer:
-
 ## Installation
 ```bash
 pip install proxalgs
