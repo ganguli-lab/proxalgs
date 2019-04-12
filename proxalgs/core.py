@@ -159,7 +159,8 @@ class Optimizer(object):
         # initialize lists of primal and dual variable copies, one for each objective
         orig_shape = theta_init.shape
         primals = [theta_init.flatten() for _ in range(num_obj)]
-        duals = [np.zeros(theta_init.size) for _ in range(num_obj)]
+        duals = [np.zeros(theta_init.size, dtype=theta_init.dtype)
+                 for _ in range(num_obj)]
         theta_avg = np.mean(primals, axis=0).ravel()
 
         # initialize penalty parameter
