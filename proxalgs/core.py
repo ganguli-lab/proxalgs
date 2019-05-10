@@ -85,7 +85,7 @@ class Optimizer(object):
 
         # if proxfun is a function, add it as its own proximal operator
         elif hasattr(proxfun, '__call__'):
-            self.objectives.append(lambda theta, rho: proxfun(theta.copy(), float(rho)))
+            self.objectives.append(lambda theta, rho: proxfun(theta.copy(), float(rho), **kwargs))
 
         # type of proxfun must be a string or a function
         else:
