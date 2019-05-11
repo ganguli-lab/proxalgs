@@ -382,4 +382,5 @@ def linsys(x0, rho, P, q):
     theta : array_like
         The parameter vector found after running the proximal update step
     """
-    return np.linalg.solve(rho * np.eye(q.shape[0]) + P, rho * x0.copy() + q)
+    return np.linalg.solve(rho * np.eye(q.shape[0], dtype=P.dtype) + P,
+                           rho * x0.copy() + q)
